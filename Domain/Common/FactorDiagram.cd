@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Factor and FactorBase are more abstract than ElementFactor and other implementation specific Factors. This means they are mainly concerned with persistance and other basic functions. ElementFactor needs an additional Unit Object that can change the dimension being displayed and the Amount of the ValueObject. This does not mean changing the FactorBase.FactorUint or the Factor.DisplayUnit since they will remain as a single, unified dimension. The User will never define an ElementFactor. mol and mEqs are strictly for display or you could have Unit and dimension converstion code distributed throughout the program. Need to ensure that FactorUnit and DisplayUnit are the same dimension, or ensure there is some mechanism make the translation everytime.">
+    <Position X="3.419" Y="0.982" Height="1.433" Width="6.23" />
+  </Comment>
+  <Comment CommentText="FactorItem are more directly involved with the UI. In an Element/FactorItem, how does the user define the amount of mEqs in the Ingredient? Since the FactorElement has the information on how to make the conversion it needs to be used.">
+    <Position X="4.274" Y="6.22" Height="1.334" Width="3.761" />
+  </Comment>
+  <Class Name="UWPLockStep.Domain.Entities.Factors.ElementFactor">
+    <Position X="2.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAQCAAAAAA=</HashCode>
+      <FileName>Entities\Factors\ElementFactor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UWPLockStep.Domain.Entities.Factors.Factor">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Factors\Factor.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DisplayUnit" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="UWPLockStep.Domain.Entities.Factors.FactorBase">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAgIAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Factors\FactorBase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="FactorUnit" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="UWPLockStep.Domain.Entities.Intermediates.FactorItem">
+    <Position X="4.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAKAAgAAAgAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Intermediates\FactorItem.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ItemFactor" />
+      <Property Name="DerivedValue" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="UWPLockStep.Domain.Common.Units.DerivedRatioValue">
+    <Position X="7" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAIAAAAACAAAAAAAAAAABAACAAAAA=</HashCode>
+      <FileName>Common\Units\DerivedRatioValue.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Unit" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="UWPLockStep.Domain.Common.Units.DerivedRatioUnit">
+    <Position X="9.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAgAAAAEIAAAAAQAQAAAACAAIAABAAAAAAA=</HashCode>
+      <FileName>Common\Units\DerivedRatioUnit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.145" />
+  </Class>
+  <Class Name="UWPLockStep.Domain.Common.Units.UnitEnumeration">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAIABAAAAAAAYEgAAAAEQAAEAAAIiAAgAoAAAgIAA=</HashCode>
+      <FileName>Common\Units\UnitEnumeration.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="UWPLockStep.Domain.Entities.Factors.MultiDimensionalFactor">
+    <Position X="2.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Entities\Factors\MultiDimensionalFactor.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MultiDimensionalUnit" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

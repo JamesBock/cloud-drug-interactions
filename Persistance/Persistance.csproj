@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>UWPLockStep.Persistance</RootNamespace>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <!--
+    System.Interactive.Async contains IAsyncEnumerable<T> that conflicts with .NET Core version
+    Give assembly an alias so .NET Core version can be referenced in C#
+  -->
+  <Target Name="ChangeAliasesOfReactiveExtensions" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'System.Interactive.Async'">
+        <Aliases>ix</Aliases>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+  <ItemGroup>
+    <Compile Remove="Handlers\Common\GetMedicationRequestsHandler.cs" />
+    <Compile Remove="Handlers\Common\GetRxCuiListHandler.cs" />
+    <Compile Remove="Handlers\Patients\GetPatientHandler.cs" />
+    <Compile Remove="Helpers\StringConcept.cs" />
+    <Compile Remove="Migrations\20191015195636_InitialCreate.cs" />
+    <Compile Remove="Migrations\20191015195636_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20191015230834_AddElementIngredient.cs" />
+    <Compile Remove="Migrations\20191015230834_AddElementIngredient.Designer.cs" />
+    <Compile Remove="Migrations\20191015231702_AddElementIngredientEntity.cs" />
+    <Compile Remove="Migrations\20191015231702_AddElementIngredientEntity.Designer.cs" />
+    <Compile Remove="Migrations\20191022181951_DecoratorTest.cs" />
+    <Compile Remove="Migrations\20191022181951_DecoratorTest.Designer.cs" />
+    <Compile Remove="Migrations\20191022193003_DecoratorTest.cs" />
+    <Compile Remove="Migrations\20191022193003_DecoratorTest.Designer.cs" />
+    <Compile Remove="Migrations\20191023040233_IngredientDecorator.cs" />
+    <Compile Remove="Migrations\20191023040233_IngredientDecorator.Designer.cs" />
+    <Compile Remove="Services\SampleDataService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hl7.Fhir.R4" Version="1.6.0" />
+    <PackageReference Include="Hl7.Fhir.Serialization" Version="1.6.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.2.5" />
+    <PackageReference Include="ReactiveUI" Version="11.1.23" />
+    <PackageReference Include="ReactiveUI.Events" Version="11.1.23" />
+    <PackageReference Include="ReactiveUI.Fody" Version="11.1.23" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.Linq.Async" Version="4.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\App\ApplicationLayer.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Handlers\Common\" />
+    <Folder Include="Handlers\Patients\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,59 @@
+﻿@inherits LayoutComponentBase
+@*<div class="sidebar">
+        <NavMenu />
+    </div>*@
+
+<div class="main container-fluid">
+    <div class="top-row px-4 container-fluid ">
+        <div class="container-fluid" style="padding-top:20px"  >
+            
+
+            @if (patientdata == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                @*<div>
+                        <table class="table table striped">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th> Name</th>
+                                    <th>Date of Birth</th>
+                                    <th>Date of Conception</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@patientdata.LastName,</td>
+                                    <td>@string.Join(" ", patientdata.GivenNames.Select(x => x))</td>
+                                    <td>@patientdata.DateOfBirth.Value.Date.ToShortDateString()</td>
+                                    <td>@patientdata.DateOfConception.Value.Date.ToShortDateString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>*@
+
+
+                <dl>
+                    <dt>Patient  Name       Date of Birth</dt>
+                    <dd>@patientdata.LastName  , @string.Join(" ", patientdata.GivenNames.Select(x => x))   @patientdata.DateOfBirth.Value.Date.ToShortDateString()</dd>
+                </dl>
+                @*<dl>
+                        <dt>Date of Conception</dt>
+                        <dd>@patientdata.DateOfConception.Value.Date.ToShortDateString()</dd>
+                    </dl>*@
+
+
+
+
+
+
+            }
+        </div>
+    </div>
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
