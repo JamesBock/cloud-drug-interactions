@@ -20,6 +20,7 @@
     <PackageReference Include="Hl7.Fhir.ElementModel" Version="1.7.0" />
     <PackageReference Include="Hl7.Fhir.Support" Version="1.7.0" />
     <PackageReference Include="Hl7.Fhir.Support.Poco" Version="1.7.0" />
+    <PackageReference Include="MatBlazor" Version="2.4.3" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
   </ItemGroup>

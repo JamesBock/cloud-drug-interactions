@@ -6,6 +6,7 @@ html, body {
 
 a, .btn-link {
     color: #0366d6;
+    
 }
 
 .btn-primary {
@@ -24,11 +25,11 @@ app {
 }
 
 .top-row {
-    height: 3em;
+    height: 3rem;
     display: flex;
     align-items: center;
-   
-    font-size:  1.2vw;
+    z-index:99;
+    
 }
 
 .main {
