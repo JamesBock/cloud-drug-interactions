@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UWPLockStep.Domain.Common.State;
-//using UWPLockStep.Domain.Entities.Intermediates;
-using UWPLockStep.Domain.Common.Units;
 using UWPLockStep.Domain.Common.State.PatientType;
 using System.Linq;
 using Hl7.Fhir.Model;
@@ -46,7 +44,7 @@ namespace UWPLockStep.Domain.Entities.People
 
         public decimal DayOfLife { get; private set; }//duplicated on PatentTypeStateless as Age
         
-        public MonoUnitValue Weight { get; set; } //Weight will always be a MonoUnitValue. No reason to use UnitValueBase.
+        //public MonoUnitValue Weight { get; set; } //Weight will always be a MonoUnitValue. No reason to use UnitValueBase.
 
         //public User Practitioner { get; set; }//This is for navigation?
        
@@ -57,7 +55,7 @@ namespace UWPLockStep.Domain.Entities.People
         {   
             var clone = new LockStepPatient(/*DateTime.Now - TimeSpan.FromDays(15), DateTime.Now - TimeSpan.FromDays(230), GivenNames, LastName*/);
             //clone.Orders = this.Orders.Select(o => o.GetCopy()).ToList();
-            clone.Weight = Weight;
+            //clone.Weight = Weight;
             return clone;
         }
         

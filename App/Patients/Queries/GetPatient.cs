@@ -1,13 +1,5 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UWPLockStep.Domain.Common;
-
 using UWPLockStep.Domain.Entities.People;
-using UWPLockStep.Domain.Interfaces;
 
 namespace UWPLockStep.ApplicationLayer.Patients.Queries
 {

@@ -13,14 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Common\Units\AmountEnumeration.cs" />
-    <Compile Remove="Common\Units\AmountValue.cs" />
-    <Compile Remove="Common\Units\Enumeration.cs" />
-    <Compile Remove="Common\Units\MolarMass.cs" />
-    <Compile Remove="Common\Units\MolarMassValue.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Hl7.Fhir.R4" Version="1.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.2.8" />
@@ -43,12 +35,6 @@
     <!--<Reference Include="Windows.Foundation.UniversalApiContract">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\References\10.0.17763.0\Windows.Foundation.UniversalApiContract\7.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
     </Reference>-->
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Common\Elements.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
