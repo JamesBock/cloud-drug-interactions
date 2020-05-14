@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UWPLockStep.Domain.Common.State;
-using UWPLockStep.Domain.Common.State.PatientType;
 using System.Linq;
 using Hl7.Fhir.Model;
 
@@ -24,13 +22,7 @@ namespace UWPLockStep.Domain.Entities.People
         }
         public Patient FhirPatient { get; set; }
 
-        private PatientStatus patientStatus;//for State
-        
-        public PatientTypeStateless PatientTypeStateless { get; protected set; } //TODO: This is replacing PatientType
-
-        public PatientType PatientType { get; }
-
-        public List<string> GivenNames { get; set; } = new List<string>();
+       public List<string> GivenNames { get; set; } = new List<string>();
 
         public string LastName { get; set; }
         
@@ -59,15 +51,11 @@ namespace UWPLockStep.Domain.Entities.People
             return clone;
         }
         
-        public void SetBirthStatus(DateTimeOffset birthday, DateTimeOffset conception)
+        public void SetBirthStatus(DateTimeOffset birthday)
         {
             DateOfBirth = birthday;
            
-            DateOfConception = conception;
-
           
-           
-            PatientTypeStateless = new PatientTypeStateless(PatientTypeStateless.PatientTypeState.NewPatient, birthday, DateOfConception);
         }
     }
 }
