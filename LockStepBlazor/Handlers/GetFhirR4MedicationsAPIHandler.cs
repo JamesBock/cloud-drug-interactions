@@ -1,6 +1,6 @@
 ﻿using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
-using ReactiveUI;
+
 using System;
 using System.Collections.Generic;
 using System.Configuration;
