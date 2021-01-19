@@ -119,17 +119,24 @@ namespace LockStepBlazor.Handlers
                                                   new MedicationConceptDTO()
                                                   {//if a Medication Resource is here, it should be from the Include clause and another Resource should be able to be matched by Id.
 
-                                                      //If a Medication is included, it is its own Resource and does not have a MedRequest that can be referenced in thsi way.
+                                                      //If a Medication is included, it is its own Resource and does not have a MedRequest that can be referenced in this way.
                                                       //if this is a MedicationStatement, it defaults to Prescriber unknown.
-                                                      Prescriber = resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().Requester == null
-                                                          ? "Prescriber Unknown"
-                                                          : resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().Requester.ToString(),
+                                                      //throws nullException at r... this is trying to find the Prescriber of the Medication by comparing the Medication resources of the MedReqs but not all of them have Medications Resources and it is throwing null
+                                                      Prescriber = resources.Select(p => p as MedicationRequest)
+                                                            .Where(r => r.Medication !=null)
+                                                            .Where(m=> (m.Medication as ResourceReference).Reference == $"Medication/{med.Id}")
+                                                            .First().Requester == null
+                                                                ? "Prescriber Unknown"
+                                                                : resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).     Reference == $"Medication/{med.Id}").First().Requester.ToString(),
 
                                                       //TimeOrdered = resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().AuthoredOnElement == null
                                                       //    ? resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().AuthoredOnElement.ToDateTimeOffset(TimeZoneInfo.Local.BaseUtcOffset)
                                                       //    : resources.Select(p => p as MedicationStatement).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().DateAssertedElement.ToDateTimeOffset(TimeZoneInfo.Local.BaseUtcOffset),
 
-                                                      ResourceId = resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").FirstOrDefault().Id,
+                                                      ResourceId = resources.Select(p => p as MedicationRequest)
+                                                      .Where(r => r.Medication !=null)
+                                                      .Where(m => (m.Medication as ResourceReference).Reference == $"Medication/{med.Id}")
+                                                      .FirstOrDefault().Id,
                                                       FhirType = med.GetType()
                                                          .ToString(),
                                                       Sys = s.System

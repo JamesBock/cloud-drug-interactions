@@ -73,7 +73,7 @@ namespace LockStepBlazor.Pages
             var requestResult = await PatientService.GetMedicationRequestsAsync("921330")
                 .ContinueWith(c => medicationConcepts = c.Result.Requests);
             var rxcuisResult = await PatientService.GetRxCuisAsync((requestResult));
-            this.StateHasChanged();
+            StateHasChanged();
             //medicationConcepts = requestResult.Result.Requests;
             var drugResult = await PatientService.GetDrugInteractionListAsync((rxcuisResult).MedDtos);
 
@@ -94,7 +94,7 @@ namespace LockStepBlazor.Pages
                                        drug.MedicationPair.Item2.FhirType = z.FhirType,
                                        drug.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
                 interactions.Add(drug);
-                this.StateHasChanged();
+                StateHasChanged();
             };
             #endregion
 
