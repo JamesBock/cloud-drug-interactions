@@ -20,21 +20,21 @@ namespace LockStepBlazor.Data.Services
 {
     public class PatientDataService : IPatientDataService
     {
-        private readonly ILogger<PatientDataService> _logger;
-        private readonly IMediator _mediator;
+        private readonly ILogger<PatientDataService> logger;
+        private readonly IMediator mediator;
        
 
         public PatientDataService(ILogger<PatientDataService> logger, IMediator mediator, IGetFhirMedications getMedications)
         {
-            _logger = logger;
-            _mediator = mediator;
+            this.logger = logger;
+            this.mediator = mediator;
          
         }
 
         public async Task<IGetFhirMedications.Model> GetMedicationRequestsAsync(string id)
         {
             
-            return await _mediator.Send(new IGetFhirMedications.Query()
+            return await mediator.Send(new IGetFhirMedications.Query()
             {
                 PatientId = id
             }).ConfigureAwait(false);
@@ -43,7 +43,7 @@ namespace LockStepBlazor.Data.Services
 
         public async Task<GetRxCuiListAPI.Model> GetRxCuisAsync(List<MedicationConceptDTO> requests)
         {
-            return await _mediator.Send(new GetRxCuiListAPI.Query()
+            return await mediator.Send(new GetRxCuiListAPI.Query()
             { 
                 Requests = requests
             }).ConfigureAwait(false);
@@ -57,7 +57,7 @@ namespace LockStepBlazor.Data.Services
         /// <returns></returns>
         public async Task<IGetDrugInteractions.Model> GetDrugInteractionListAsync(List<string> medDtos)
         {
-            return await _mediator.GetDrugInteractions(medDtos).ConfigureAwait(false);
+            return await mediator.GetDrugInteractions(medDtos).ConfigureAwait(false);
         }
 
         //public async IAsyncEnumerable<DrugInteraction> GetDrugInteractionList(IEnumerable<string> drugs)
@@ -69,7 +69,7 @@ namespace LockStepBlazor.Data.Services
 
         public async Task<GetPatient.Model> GetPatientAsync(string id)
         {
-            return await _mediator.Send(new GetPatient.Query()
+            return await mediator.Send(new GetPatient.Query()
             {
                 PatientId = id
             }).ConfigureAwait(false);

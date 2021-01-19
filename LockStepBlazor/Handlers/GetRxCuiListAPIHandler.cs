@@ -17,9 +17,9 @@ namespace LockStepBlazor.Handlers
 {
     public class GetRxCuiListAPIHandler : GetRxCuiListAPI.IHandler
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient httpClient;
 
-        protected readonly Channel<(Task<HttpResponseMessage>, MedicationConceptDTO)> c = Channel.CreateUnbounded<(Task<HttpResponseMessage>, MedicationConceptDTO)>();
+        protected readonly List<(Task<HttpResponseMessage>, MedicationConceptDTO)> channel = new List<(Task<HttpResponseMessage>, MedicationConceptDTO)>();
 
         //private readonly List<MedicationConceptDTO> _medDtos = new List<MedicationConceptDTO>();
 
@@ -27,7 +27,7 @@ namespace LockStepBlazor.Handlers
 
         public GetRxCuiListAPIHandler(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            this.httpClient = httpClient;
 
         }
         public async Task<GetRxCuiListAPI.Model> Handle(GetRxCuiListAPI.Query request, CancellationToken cancellationToken)
@@ -63,7 +63,7 @@ namespace LockStepBlazor.Handlers
             //};
             //return new GetRxCuiList.Model() { MedDtos = _rxCuis };
 
-            while (c.Reader.TryRead(out var item))
+            foreach (var item in channel)
             {
                 //var item = await c.Reader.ReadAsync();
                 if (item.Item1 != null)
@@ -131,8 +131,8 @@ namespace LockStepBlazor.Handlers
            /// <param name="anons"></param>
          void FetchRxCuis(List<MedicationConceptDTO> anons) //Switching this to List from IAsyncEnumerable sped up performance significantly. Ave around 3.5 sec  first hit and upper 900ms in subsequent pings, vs 5 -6 sec and 2+ subsequent pings
         {
-
-            foreach (var anon in anons) //Removed IAsyncEnumerable and switched this to a foreach from an await foreach. The awaiter creates a new state in the async state machine.  
+            var watch = Stopwatch.StartNew();
+            Parallel.ForEach(anons, (anon) => //Removed IAsyncEnumerable and switched this to a foreach from an await foreach. The awaiter creates a new state in the async state machine.  
             //Task.Run(async () =>
             //{
             {
@@ -140,54 +140,30 @@ namespace LockStepBlazor.Handlers
                 switch (anon.Sys)
                 {
                     case "http://hl7.org/fhir/sid/ndc":
-                         c.Writer.WriteAsync((_httpClient.GetAsync($"?idtype=NDC&id={anon.CodeString}"), anon));
+                        channel.Add((httpClient.GetAsync($"?idtype=NDC&id={anon.CodeString}"), anon));
                         break;
 
                     case "http://snomed.info/sct":
-                         c.Writer.WriteAsync((_httpClient.GetAsync($"?idtype=SNOMEDCT&id={anon.CodeString}"), anon));
+                        channel.Add((httpClient.GetAsync($"?idtype=SNOMEDCT&id={anon.CodeString}"), anon));
                         break;
 
                     case "http://www.nlm.nih.gov/research/umls/rxnorm":
-                         c.Writer.WriteAsync((null, anon));
+                        channel.Add((null, anon));
                         break;
 
                     default: //TODO: what should happen if the code is not from any of these systems?
                         break;
                 }
-            }
+                Debug.WriteLine($"GetRXCUI call initiated at: {watch.Elapsed}");
+            });
             //c.Writer.Complete();
 
             ////}
             //);
             //return c.Reader;
-
+            watch.Stop();
         }
-        //TODO: Does this need its own handler? This is one place a stream might be noticable since each RxCUI needs its own API call
-        //This does not have concurrency so items are returned one by one...but once an item is returned, it can be used by calling code, and the next API call can execute?
-        //private async IAsyncEnumerable<HttpResponseMessage> FetchRxCuis(List<StringConcept> anons)
-        //{
-        //    foreach (var anon in anons)
-        //    {
 
-        //        switch (anon.Sys)
-        //        {
-        //            case "http://hl7.org/fhir/sid/ndc":
-        //                yield return await _httpClient.GetAsync($"?idtype=NDC&id={anon.CodeString}");
-        //                break;
-
-        //            case "http://snomed.info/sct":
-        //                yield return await _httpClient.GetAsync($"?idtype=SNOMEDCT&id={anon.CodeString}");
-        //                break;
-
-        //            case "http://www.nlm.nih.gov/research/umls/rxnorm":
-        //                _rxCuiList.Add(anon.CodeString);
-        //                break;
-
-        //            default: //TODO: what should happen if the code is not from any of these systems?
-        //                break;
-        //        }
-        //    }
-        //}
         #region Channel for RxCUI strings to send to individual drug api
         //the channel pipes the responses from the API to the NewtonSoft Parser...as they come in?
 

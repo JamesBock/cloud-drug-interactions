@@ -27,11 +27,8 @@ namespace LockStepBlazor.Handlers
             await ParseMedicationsAsync(MedicationJSONString.ParseMedsAsync());
             var res = new IGetFhirMedications.Model();
 
-            while (channel.Reader.TryRead(out var dto))//behavior is odd under the debugger
-            {
-                res.Requests.Add(dto);//Channels are out of the practical scope of this project but it was a good way to learn how to use them...How would they be applicable?
-            }
-
+            meds.ForEach(dto=> res.Requests.Add(dto));
+            
             return res;
 
         }

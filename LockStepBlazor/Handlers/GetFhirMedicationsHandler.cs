@@ -20,7 +20,8 @@ namespace LockStepBlazor.Handlers
     {
         protected readonly IFhirClient _client;
 
-        protected readonly Channel<MedicationConceptDTO> channel = Channel.CreateUnbounded<MedicationConceptDTO>();
+        //protected readonly Channel<MedicationConceptDTO> channel = Channel.CreateUnbounded<MedicationConceptDTO>();
+        protected readonly List<MedicationConceptDTO> meds = new List<MedicationConceptDTO>();
 
         public GetFhirMedicationsHandler(IFhirClient client)
         {
@@ -33,7 +34,7 @@ namespace LockStepBlazor.Handlers
         {
             return result.ContinueWith(bund =>
             {
-                Task.Run(() => //This is not necessary for such a small dataset but if this was very large it could help because this is a CPU bound process Task.Run is appropriate.
+                Task.Run(() => //This is not necessary for such a small dataset but if this was very large it could help. Because this is a CPU bound process Task.Run is appropriate.
                 {
                     MedsToChannel(bund.GetAwaiter().GetResult().Entry
                                         .Select(e => e.Resource as Bundle)
@@ -114,15 +115,14 @@ namespace LockStepBlazor.Handlers
                 {
                     case ResourceType.Medication://will never have a contained medication
                         var med = item as Medication;
-                        //var code = med.Contained.Select(x => x.ResourceType == ResourceType.Medication ? x as Medication : null);
-                        channel.Writer.WriteAsync(med.Code.Coding.Select(s =>
+                      
+                        meds.Add(med.Code.Coding.Select(s =>
                                                   new MedicationConceptDTO()
                                                   {//if a Medication Resource is here, it should be from the Include clause and another Resource should be able to be matched by Id.
 
                                                       //If a Medication is included, it is its own Resource and does not have a MedRequest that can be referenced in this way.
                                                       //if this is a MedicationStatement, it defaults to Prescriber unknown.
-                                                      //throws nullException at r... this is trying to find the Prescriber of the Medication by comparing the Medication resources of the MedReqs but not all of them have Medications Resources and it is throwing null
-                                                      Prescriber = resources.Select(p => p as MedicationRequest)
+                                                    Prescriber = resources.Select(p => p as MedicationRequest)
                                                             .Where(r => r.Medication !=null)
                                                             .Where(m=> (m.Medication as ResourceReference).Reference == $"Medication/{med.Id}")
                                                             .First().Requester == null
@@ -170,9 +170,9 @@ namespace LockStepBlazor.Handlers
                                                           .ToLower(),
                                 CodeString = s.Code,
                                 Text = c.Code.Text
-                            }).FirstOrDefault());
+                            }).FirstOrDefault()).ToList();
 
-                            q.Select(c => channel.Writer.WriteAsync(c)).ToList();//if this isn't sent ToList, it doesnt add to the channel
+                            q.ForEach(c => meds.Add(c));//if this isn't sent ToList, it doesnt add to the channel
 
                             break;
                         }
@@ -187,7 +187,7 @@ namespace LockStepBlazor.Handlers
                             {
 
 
-                                channel.Writer.WriteAsync(medReqMed.Coding.Select(s =>
+                                meds.Add(medReqMed.Coding.Select(s =>
                                                      new MedicationConceptDTO()
                                                      {
                                                          Prescriber = medReq.Requester == null
@@ -211,10 +211,10 @@ namespace LockStepBlazor.Handlers
                     case ResourceType.MedicationStatement:
                         var medState = item as MedicationStatement;
                         var medStateMed = medState.Medication as CodeableConcept;
-                        var codeState = medState.Contained.Select(x => x.ResourceType == ResourceType.Medication ? x as Medication : null);
+                        var codeState = medState.Contained.Select(x => x.ResourceType == ResourceType.Medication ? x as Medication : null).ToList();
                         if (codeState.Any(m => m.ResourceType == ResourceType.Medication))
                         {
-                            codeState.Select(x => channel.Writer.WriteAsync(x.Code.Coding.Select(s =>
+                            codeState.ForEach(x => meds.Add(x.Code.Coding.Select(s =>
                                                  new MedicationConceptDTO()
                                                  {
                                                      Prescriber = medState.InformationSource == null
@@ -242,7 +242,7 @@ namespace LockStepBlazor.Handlers
                             }
                             else
                             {
-                                channel.Writer.WriteAsync(medStateMed.Coding.Select(s =>
+                                meds.Add(medStateMed.Coding.Select(s =>
                                                     new MedicationConceptDTO()
                                                     {
                                                         Prescriber = medState.InformationSource == null

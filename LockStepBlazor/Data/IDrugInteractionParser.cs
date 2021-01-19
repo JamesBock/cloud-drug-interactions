@@ -8,8 +8,8 @@ using UWPLockStep.Domain.Common;
 
 namespace LockStepBlazor.Data
 {
-    public interface IDrugInteractionParser
+    public interface IDrugInteractionParser : IObservable<MedicationInteractionPair>
     {
-        public List<MedicationInteractionPair> ParseDrugInteractions(string jstring);
+        public void ParseDrugInteractions(string jstring);
     }
 }

@@ -10,9 +10,13 @@ using UWPLockStep.Domain.Common;
 
 namespace LockStepBlazor.Data.Services
 {
-    public class DrugInteractionParser : IDrugInteractionParser
+    public class DrugInteractionParser : IDrugInteractionParser, IObservable<MedicationInteractionPair>
     {
-        public List<MedicationInteractionPair> ParseDrugInteractions(string jstring)
+        public DrugInteractionParser()
+        {
+            observers = new List<IObserver<MedicationInteractionPair>>();
+        }
+        public void ParseDrugInteractions(string jstring)
         {
 
             var interactionList = new List<MedicationInteractionPair>();
@@ -92,9 +96,11 @@ namespace LockStepBlazor.Data.Services
 
                         interaction.DrugInteractionDetails.Add(detail);
                     }
-                    //await Task.Delay(500);
-                    //yield return interaction;
 
+                    foreach (var observer in observers)
+                    {
+                        observer.OnNext(interaction);
+                    }
                 }
                 if (interactionPairCount == 0)
                 {
@@ -104,14 +110,48 @@ namespace LockStepBlazor.Data.Services
                                         new MedicationInteractionPair.InteractionDetail()
                                         { Description = "No Drug-Drug Interactions Found", Severity = "N/A", LinkTupList = new List<(string, Uri)>() { ("NIH", new Uri(Constants.NLM_INTERACTION_API_URI)) } });
                     //yield return emptyDrug;
-
+                    foreach (var observer in observers)
+                    {
+                        observer.OnNext(emptyDrug);
+                    }
                     //return new GetDrugInteractions.Model() { Meds = interactionList };
                 }
             }
 
 
-
-            return interactionList;
+            foreach (var o in observers)
+            {
+                o.OnCompleted();
+            }
+            //return interactionList;
         }
+
+        private List<IObserver<MedicationInteractionPair>> observers;
+
+        public IDisposable Subscribe(IObserver<MedicationInteractionPair> observer)
+        {
+            if (!observers.Contains(observer))
+                observers.Add(observer);
+            return new Unsubscriber(observers, observer);
+        }
+
+        private class Unsubscriber : IDisposable
+        {
+            private List<IObserver<MedicationInteractionPair>> _observers;
+            private IObserver<MedicationInteractionPair> _observer;
+
+            public Unsubscriber(List<IObserver<MedicationInteractionPair>> observers, IObserver<MedicationInteractionPair> observer)
+            {
+                this._observers = observers;
+                this._observer = observer;
+            }
+
+            public void Dispose()
+            {
+                if (_observer != null && _observers.Contains(_observer))
+                    _observers.Remove(_observer);
+            }
+        }
+
     }
 }

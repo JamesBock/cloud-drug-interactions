@@ -63,6 +63,7 @@ namespace LockStepBlazor
             services.AddServerSideBlazor().AddCircuitOptions(o => { o.DetailedErrors = true; }) ;
             services.AddMediatR(typeof(Startup));
             services.AddSingleton<IDrugInteractionParser, DrugInteractionParser>();
+            services.AddSingleton<IDrugInteractionParserAsync, DrugInteractionParserAsync>();
             //services.AddSingleton(Channel.CreateUnbounded<string>());
             services.AddSingleton<IPatientDataService, PatientDataService>();
         }

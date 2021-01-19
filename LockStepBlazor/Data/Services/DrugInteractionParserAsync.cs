@@ -58,45 +58,58 @@ namespace LockStepBlazor.Data.Services
 
                     string PATTERN = @"interaction.(?:(?!\.).)*";
                     var m = Regex.Matches(interaction.Comment, PATTERN);
-                    //int parseHelper = 5;
-                    for (int p = 0; p < interactionConceptCount; p++)
+
+
+                    // for (int p = 0; p < interactionConceptCount; p++)
+                    // {
+
+                    //     var detail = new MedicationInteractionPair.InteractionDetail();
+
+                    //     detail.InteractionAssertion = char.ToUpper(m[p].Groups[0].Value[0]) + m[p].Groups[0].Value.Substring(1);
+
+                    //     detail.Description = j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["description"].ToString();
+
+                    //     detail.Severity = j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["severity"].ToString();
+
+                    //     detail.LinkTupList = new List<(string, Uri)>(j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["interactionConcept"].Children()["minConceptItem"]["name"].ToList()
+                    //                                 .Select(x => x.ToString().ToUpper())
+                    //                                 .Zip(j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["interactionConcept"].Children()["sourceConceptItem"]["url"].ToList()
+                    //                                 .Select(v => new Uri(v.ToString().Equals("NA")
+                    //                                 ? "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3422823/"
+                    //                                 : v.ToString()))));
+
+
+                    //     interaction.DrugInteractionDetails.Add(detail);
+                    // }
+                    var option = new ParallelOptions();
+                   
+                    Parallel.For(0, interactionConceptCount, (p, state) =>
                     {
 
                         var detail = new MedicationInteractionPair.InteractionDetail();
 
-                        detail.InteractionAssertion = char.ToUpper(m[p].Groups[0].Value[0]) + m[p].Groups[0].Value.Substring(1);
+                            detail.InteractionAssertion = char.ToUpper(m[p].Groups[0].Value[0]) + m[p].Groups[0].Value.Substring(1);
 
-                        detail.Description = j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["description"].ToString();
+                            detail.Description = j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["description"].ToString();
 
-                        detail.Severity = j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["severity"].ToString();
+                            detail.Severity = j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["severity"].ToString();
 
-                        detail.LinkTupList = new List<(string, Uri)>(j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["interactionConcept"].Children()["minConceptItem"]["name"].ToList()
-                                                    .Select(x => x.ToString().ToUpper())
-                                                    .Zip(j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["interactionConcept"].Children()["sourceConceptItem"]["url"].ToList()
-                                                    .Select(v => new Uri(v.ToString().Equals("NA")
-                                                    ? "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3422823/"
-                                                    : v.ToString()))));
+                            detail.LinkTupList = new List<(string, Uri)>(j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["interactionConcept"].Children()["minConceptItem"]["name"].ToList()
+                                                        .Select(x => x.ToString().ToUpper())
+                                                        .Zip(j["fullInteractionTypeGroup"][f]["fullInteractionType"][i]["interactionPair"][p]["interactionConcept"].Children()["sourceConceptItem"]["url"].ToList()
+                                                        .Select(v => new Uri(v.ToString().Equals("NA")
+                                                        ? "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3422823/"
+                                                        : v.ToString()))));
 
-                        //detail.InteractionAssertion = (interaction.Comment.Substring(m.Index + 4)[0])+ interaction.Comment.Substring(m.Index + 5)?? "No Details on Source available";
-
-                        //string[] stringArray = { "Drug1", "Drug2" };
-                        //var splitString = interaction.Comment.Split(stringArray, StringSplitOptions.RemoveEmptyEntries);
-                        //string levelOne =  p == 0 ? splitString[3] : splitString[parseHelper];
-                        //var levelTwo  = levelOne.Split("and ", 2)[1];
-                        //detail.InteractionAssertion = char.ToUpper(levelTwo[0]) + levelTwo.Substring(1);
-                        //while (p > 0)
-                        //{
-
-                        //    parseHelper = splitString.Count() - 1 > parseHelper ? parseHelper + 2 : 5;
-                        //    break;
-                        //}
 
                         interaction.DrugInteractionDetails.Add(detail);
-                    }
-                        //await Task.Delay(500);
-                        yield return interaction;
+
+                    });
+
+                    yield return interaction;
 
                 }
+
                 if (interactionPairCount == 0)
                 {
                     var emptyDrug = new MedicationInteractionPair();
@@ -104,13 +117,11 @@ namespace LockStepBlazor.Data.Services
 
                                         new MedicationInteractionPair.InteractionDetail()
                                         { Description = "No Drug-Drug Interactions Found", Severity = "N/A", LinkTupList = new List<(string, Uri)>() { ("NIH", new Uri(Constants.NLM_INTERACTION_API_URI)) } });
-                     yield return emptyDrug;
+                    yield return emptyDrug;
 
                     //return new GetDrugInteractions.Model() { Meds = interactionList };
                 }
             }
-
-
 
             //return interactionList;
         }

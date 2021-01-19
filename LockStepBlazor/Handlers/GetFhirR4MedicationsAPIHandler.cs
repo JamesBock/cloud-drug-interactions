@@ -45,10 +45,10 @@ namespace LockStepBlazor.Handlers
             
             await ParseMedicationsAsync(tResult).ConfigureAwait(false);//if this is not awaited, the  channel will start to TryRead before anything is in the channel and an empty res in returned
 
-            while (channel.Reader.TryRead(out var dto))//what if this was switched to not closed and the ParseMedicationAsync isnt awaited?...Closes before it gets here
-            {
-                res.Requests.Add(dto);//Channels might be out of the practical scope of this project but it was a good way to learn how to use them...How would they be applicable?
-            }
+            meds.ForEach(dto => //what if this was switched to not closed and the ParseMedicationAsync isnt awaited?...Closes before it gets here
+            
+                res.Requests.Add(dto));//Channels might be out of the practical scope of this project but it was a good way to learn how to use them...How would they be applicable?
+            
             //while (!channel.Reader.Completion.IsCompleted)//what if this was switched to not closed and the ParseMedicationAsync isnt awaited?
             //{
             //    res.Requests.Add(await channel.Reader.ReadAsync());//Channels might be out of the practical scope of this project but it was a good way to learn how to use them...How would they be applicable?

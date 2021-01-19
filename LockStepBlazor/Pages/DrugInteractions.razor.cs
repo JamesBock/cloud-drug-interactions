@@ -13,10 +13,10 @@ using System.Diagnostics;
 namespace LockStepBlazor.Pages
 
 {
-    public partial class DrugInteractions : ComponentBase
+    public partial class DrugInteractions : ComponentBase, IObserver<MedicationInteractionPair>
     {
         [Inject]
-        protected IDrugInteractionParser DrugInteractionParser { get; set; }
+        protected IDrugInteractionParserAsync DrugInteractionParser { get; set; }
         [Inject]
         protected IPatientDataService PatientService { get; set; }
 
@@ -67,7 +67,7 @@ namespace LockStepBlazor.Pages
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-
+            //DrugInteractionParser.Subscribe(this);
             #region Live APIs
 
             var requestResult = await PatientService.GetMedicationRequestsAsync("921330")
@@ -76,8 +76,8 @@ namespace LockStepBlazor.Pages
             StateHasChanged();
             //medicationConcepts = requestResult.Result.Requests;
             var drugResult = await PatientService.GetDrugInteractionListAsync((rxcuisResult).MedDtos);
-
-             foreach (var drug in DrugInteractionParser.ParseDrugInteractions(await drugResult.Meds))
+            //DrugInteractionParser.ParseDrugInteractions(await drugResult.Meds);
+             await foreach ( var drug in DrugInteractionParser.ParseDrugInteractionsAsync(await drugResult.Meds))
             {
                 collapseDrugInteraction.Add(drug.InteractionId, true);
 
@@ -95,7 +95,7 @@ namespace LockStepBlazor.Pages
                                        drug.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
                 interactions.Add(drug);
                 StateHasChanged();
-            };
+           };
             #endregion
 
 
@@ -228,7 +228,34 @@ namespace LockStepBlazor.Pages
             #endregion
         }
 
+        public void OnCompleted()
+        {
+           
+        }
 
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
 
+        public void OnNext(MedicationInteractionPair value)
+        {
+             collapseDrugInteraction.Add(value.InteractionId, true);
+
+                medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item1.RxCui)
+                                        .Select(z => (value.MedicationPair.Item1.DisplayName = z.Text,
+                                       value.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
+                                       value.MedicationPair.Item1.Prescriber = z.Prescriber,
+                                       value.MedicationPair.Item1.FhirType = z.FhirType,
+                                       value.MedicationPair.Item1.ResourceId = z.ResourceId)).ToList();
+                medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item2.RxCui)
+                                        .Select(z => (value.MedicationPair.Item2.DisplayName = z.Text,
+                                       value.MedicationPair.Item2.TimeOrdered = z.TimeOrdered,
+                                       value.MedicationPair.Item2.Prescriber = z.Prescriber,
+                                       value.MedicationPair.Item2.FhirType = z.FhirType,
+                                       value.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
+                interactions.Add(value);
+                InvokeAsync( ()=> StateHasChanged());
+        }
     }
 }
