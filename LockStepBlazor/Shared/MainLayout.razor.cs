@@ -1,5 +1,6 @@
 ﻿using LockStepBlazor.Data;
 using LockStepBlazor.Data.Models;
+using LockStepBlazor.Data.Services;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,21 @@ namespace LockStepBlazor.Shared
     {
         [Inject]
         protected IPatientDataService PatientService { get; set; }
-        protected LockStepPatient patientdata;
 
-        protected override async Task OnInitializedAsync()
-        {
-            var pat = await PatientService.GetPatientAsync("921330");
-            patientdata = pat.QueriedPatient;
-        }
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
+
+        protected LockStepPatient patientdata;
+        protected string SearchFirst { get; set; }
+        protected string SearchLast { get; set; }
+        protected List<Hl7.Fhir.Model.Patient> Patients = new List<Hl7.Fhir.Model.Patient>();
+
+        // protected override async Task OnInitializedAsync()
+        // {
+        //     //var pat = await PatientService.GetPatientAsync("921330");
+        //     //patientdata = pat.QueriedPatient;
+        // }
+
+     
     }
 }

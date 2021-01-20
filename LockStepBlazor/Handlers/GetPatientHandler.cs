@@ -10,11 +10,11 @@ namespace LockStepBlazor.Handlers
 {
     public class GetPatientHandler : GetPatient.IHandler
     {
-        private readonly IFhirClient _client;
+        private readonly IFhirClient client;
 
         public GetPatientHandler(IFhirClient client)
         {
-            _client = client;
+            this.client = client;
             
         }
 
@@ -42,7 +42,7 @@ namespace LockStepBlazor.Handlers
             //                .LimitTo(1)//Incase there is more than one, though there shouldnt be, but I added two to the FHIR server to see what happens 
             //                .Include("Observation:subject");//TODO: this will get all Observation infor from the server on Patient?
 
-            var qResult = await _client.ReadAsync<Patient>($"Patient/{request.PatientId}");
+            var qResult = await client.ReadAsync<Patient>($"Patient/{request.PatientId}");
             //var conceptionObservation = (Observation)qResult.Entry[0].Resource;
             //var conceptionFhirDateTime = (FhirDateTime)conceptionObservation.Value;
             //var pat = (Patient)qResult.Entry[1].Resource;

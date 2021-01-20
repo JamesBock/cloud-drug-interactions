@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/DrugInteractions/{PatientId}"
 @inject IJSRuntime JSRuntime
 @using LockStepBlazor.Data
 @using MatBlazor 
@@ -33,7 +33,7 @@ else if (interactions.Count() < 24)
             <thead>
                 <tr>
                     <th>Medication Name</th>
-                    <th>Prescribed or Take at Home</th>
+                    <th>Prescribed or Taken at Home</th>
                 </tr>
             </thead>
 

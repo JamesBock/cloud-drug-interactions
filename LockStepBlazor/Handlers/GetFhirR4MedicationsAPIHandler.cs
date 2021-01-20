@@ -30,22 +30,22 @@ namespace LockStepBlazor.Handlers
             //implementation will vary based on FHIR version
             var q = new SearchParams()
                              .Where($"patient={request.PatientId}")
-                             .Include("MedicationRequest:medication").LimitTo(1000);//These are only added to the bundle if there is a Medication Resource referenced, not if there is a CodeableConcept describing the Medication
+                             .Include("MedicationRequest:medication").LimitTo(50);//These are only added to the bundle if there is a Medication Resource referenced, not if there is a CodeableConcept describing the Medication
 
             var t = new SearchParams()
                              .Where($"patient={request.PatientId}")
-                             .Include("MedicationStatement:medication").LimitTo(1000);
+                             .Include("MedicationStatement:medication").LimitTo(50);
 
-            var trans = new TransactionBuilder(_client.Endpoint);
+            var trans = new TransactionBuilder(client.Endpoint);
             trans = trans.Search(q, "MedicationRequest").Search(t, "MedicationStatement");
             //var result = await _client.SearchAsync<MedicationRequest>(q);
-            var tResult = _client.TransactionAsync(trans.ToBundle());
+            var tResult = client.TransactionAsync(trans.ToBundle());
 
             var res = new IGetFhirMedications.Model();
             
-            await ParseMedicationsAsync(tResult).ConfigureAwait(false);//if this is not awaited, the  channel will start to TryRead before anything is in the channel and an empty res in returned
+            var meds = await ParseMedicationsAsync(tResult);//if this is not awaited, the  channel will start to TryRead before anything is in the channel and an empty res in returned
 
-            meds.ForEach(dto => //what if this was switched to not closed and the ParseMedicationAsync isnt awaited?...Closes before it gets here
+            meds.ToList().ForEach(dto => //what if this was switched to not closed and the ParseMedicationAsync isnt awaited?...Closes before it gets here
             
                 res.Requests.Add(dto));//Channels might be out of the practical scope of this project but it was a good way to learn how to use them...How would they be applicable?
             

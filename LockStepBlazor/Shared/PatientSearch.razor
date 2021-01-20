@@ -1,0 +1,56 @@
+@page "/"
+@using LockStepBlazor.Data
+@using MatBlazor
+
+<p>First Name:
+    <input @bind="SearchFirst" @bind:event="oninput">@SearchFirst
+</p>
+<p>Last Name:
+    <input @bind="SearchLast" @bind:event="oninput">@SearchLast
+</p>
+<button @onclick="SearchForPatients">
+    Search
+</button>
+
+@if (Patients.Count == 0)
+{
+    <p><em>Search for a Patient</em></p>
+}
+
+else
+{
+    <div>
+    <table class="table table striped">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th> Name</th>
+                <th>Date of Birth</th>
+                <th>Date of Conception</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Patients)
+                {
+                    <tr>
+                        <td>@item.FhirPatient.Name.FirstOrDefault().Family</td>
+                        <td>@string.Join(" ", @item.FhirPatient.Name.FirstOrDefault().Given.FirstOrDefault())</td>
+                        <td>@item.Medications.Count</td>
+                        <button @onclick="@(()=>@NavigateToInteractions(item.Id))">Select</button>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button disabled="@CanMoveFirst" @onclick="NavigateBundleFirst">first</button>
+
+        <button disabled="@CanMovePrevious" @onclick="NavigateBundlePrevious">previous</button>
+
+        <button disabled="@CanMoveNext" @onclick="NavigateBundleNext">next</button>
+
+
+        <button disabled="@CanMoveLast" @onclick="NavigateBundleLast">last</button>
+
+    </div>
+}

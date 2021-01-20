@@ -26,6 +26,9 @@ namespace LockStepBlazor.Pages
 
         protected Dictionary<Guid, bool> collapseDrugInteraction = new Dictionary<Guid, bool>();
 
+        [Parameter]
+        public string PatientId { get; set; }
+
         /// <summary>
         /// When render type is set to ServerPrerendered, this whole method will load before the screen is loaded so all of the interaction will be shown at once. Then the app will rerender and "stream" the interactions. When in server mode the interactions are stream right away. Streaming effect is caused by the DrugInteractionParser 
         /// </summary>
@@ -63,73 +66,47 @@ namespace LockStepBlazor.Pages
         //        this.StateHasChanged();
         //    };
         //    #endregion
-        protected override async Task OnInitializedAsync()
+        protected async override void OnParametersSet()
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             //DrugInteractionParser.Subscribe(this);
             #region Live APIs
 
-            var requestResult = await PatientService.GetMedicationRequestsAsync("921330")
+            var requestResult = await PatientService.GetMedicationRequestsAsync(PatientId)
                 .ContinueWith(c => medicationConcepts = c.Result.Requests);
-            var rxcuisResult = await PatientService.GetRxCuisAsync((requestResult));
-            StateHasChanged();
-            //medicationConcepts = requestResult.Result.Requests;
-            var drugResult = await PatientService.GetDrugInteractionListAsync((rxcuisResult).MedDtos);
-            //DrugInteractionParser.ParseDrugInteractions(await drugResult.Meds);
-             await foreach ( var drug in DrugInteractionParser.ParseDrugInteractionsAsync(await drugResult.Meds))
+            if (requestResult.Count > 0)
             {
-                collapseDrugInteraction.Add(drug.InteractionId, true);
-
-                medicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item1.RxCui)
-                                        .Select(z => (drug.MedicationPair.Item1.DisplayName = z.Text,
-                                       drug.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
-                                       drug.MedicationPair.Item1.Prescriber = z.Prescriber,
-                                       drug.MedicationPair.Item1.FhirType = z.FhirType,
-                                       drug.MedicationPair.Item1.ResourceId = z.ResourceId)).ToList();
-                medicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item2.RxCui)
-                                        .Select(z => (drug.MedicationPair.Item2.DisplayName = z.Text,
-                                       drug.MedicationPair.Item2.TimeOrdered = z.TimeOrdered,
-                                       drug.MedicationPair.Item2.Prescriber = z.Prescriber,
-                                       drug.MedicationPair.Item2.FhirType = z.FhirType,
-                                       drug.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
-                interactions.Add(drug);
+                var rxcuisResult = await PatientService.GetRxCuisAsync((requestResult));
                 StateHasChanged();
-           };
+                //medicationConcepts = requestResult.Result.Requests;
+                var drugResult = await PatientService.GetDrugInteractionListAsync((rxcuisResult).MedDtos);
+                //DrugInteractionParser.ParseDrugInteractions(await drugResult.Meds);
+                await foreach (var drug in DrugInteractionParser.ParseDrugInteractionsAsync(await drugResult.Meds))
+                {
+                    collapseDrugInteraction.Add(drug.InteractionId, true);
+
+                    medicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item1.RxCui)
+                                            .Select(z => (drug.MedicationPair.Item1.DisplayName = z.Text,
+                                           drug.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
+                                           drug.MedicationPair.Item1.Prescriber = z.Prescriber,
+                                           drug.MedicationPair.Item1.FhirType = z.FhirType,
+                                           drug.MedicationPair.Item1.ResourceId = z.ResourceId)).ToList();
+                    medicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item2.RxCui)
+                                            .Select(z => (drug.MedicationPair.Item2.DisplayName = z.Text,
+                                           drug.MedicationPair.Item2.TimeOrdered = z.TimeOrdered,
+                                           drug.MedicationPair.Item2.Prescriber = z.Prescriber,
+                                           drug.MedicationPair.Item2.FhirType = z.FhirType,
+                                           drug.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
+                    interactions.Add(drug);
+                    StateHasChanged();
+                }
+
+            };
             #endregion
 
-
-
-
-
-            //drugs = DrugInteractionParser.ParseDrugInteractions(DrugInteractionString.InteractionString);
-            //var fixer = requestResult.Requests.Select(z => interactions
-            //                 .Where(i => i.MedicationPair.Item1.RxCui == z.RxCui)
-            //                 .Select(s => (
-            //                           s.MedicationPair.Item1.DisplayName = z.Text,
-            //                           s.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
-            //                           s.MedicationPair.Item1.Prescriber = z.Prescriber,
-            //                           s.MedicationPair.Item1.FhirType = z.FhirType,
-            //                           s.MedicationPair.Item1.ResourceId = z.ResourceId))).ToAsyncEnumerable();
-
-
-            //var fixer2 = requestResult.Requests.Select(z => interactions
-            //                   .Where(i => i.MedicationPair.Item2.RxCui == z.RxCui)
-            //                   .Select(s => (
-            //                             s.MedicationPair.Item2.DisplayName = z.Text, 
-            //                             s.MedicationPair.Item2.TimeOrdered = z.TimeOrdered, 
-            //                             s.MedicationPair.Item2.Prescriber = z.Prescriber, 
-            //                             s.MedicationPair.Item2.FhirType = z.FhirType, 
-            //                             s.MedicationPair.Item2.ResourceId = z.ResourceId))).ToAsyncEnumerable();
-
             Debug.WriteLine($"Drug interations loaded by {stopwatch.ElapsedMilliseconds}");
-            //foreach (var drug in interactions)
-            //{
-
-            //}
-
-
-
+         
             #region Old code using joins to unify interaction data and Medication data
 
             // var piper1 = interactions.Join(requestResult.Requests,
@@ -230,7 +207,7 @@ namespace LockStepBlazor.Pages
 
         public void OnCompleted()
         {
-           
+
         }
 
         public void OnError(Exception error)
@@ -240,22 +217,22 @@ namespace LockStepBlazor.Pages
 
         public void OnNext(MedicationInteractionPair value)
         {
-             collapseDrugInteraction.Add(value.InteractionId, true);
+            collapseDrugInteraction.Add(value.InteractionId, true);
 
-                medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item1.RxCui)
-                                        .Select(z => (value.MedicationPair.Item1.DisplayName = z.Text,
-                                       value.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
-                                       value.MedicationPair.Item1.Prescriber = z.Prescriber,
-                                       value.MedicationPair.Item1.FhirType = z.FhirType,
-                                       value.MedicationPair.Item1.ResourceId = z.ResourceId)).ToList();
-                medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item2.RxCui)
-                                        .Select(z => (value.MedicationPair.Item2.DisplayName = z.Text,
-                                       value.MedicationPair.Item2.TimeOrdered = z.TimeOrdered,
-                                       value.MedicationPair.Item2.Prescriber = z.Prescriber,
-                                       value.MedicationPair.Item2.FhirType = z.FhirType,
-                                       value.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
-                interactions.Add(value);
-                InvokeAsync( ()=> StateHasChanged());
+            medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item1.RxCui)
+                                    .Select(z => (value.MedicationPair.Item1.DisplayName = z.Text,
+                                   value.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
+                                   value.MedicationPair.Item1.Prescriber = z.Prescriber,
+                                   value.MedicationPair.Item1.FhirType = z.FhirType,
+                                   value.MedicationPair.Item1.ResourceId = z.ResourceId)).ToList();
+            medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item2.RxCui)
+                                    .Select(z => (value.MedicationPair.Item2.DisplayName = z.Text,
+                                   value.MedicationPair.Item2.TimeOrdered = z.TimeOrdered,
+                                   value.MedicationPair.Item2.Prescriber = z.Prescriber,
+                                   value.MedicationPair.Item2.FhirType = z.FhirType,
+                                   value.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
+            interactions.Add(value);
+            InvokeAsync(() => StateHasChanged());
         }
     }
 }

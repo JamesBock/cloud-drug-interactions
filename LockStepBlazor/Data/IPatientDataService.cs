@@ -1,5 +1,7 @@
 ﻿using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 using LockStepBlazor.Data.Models;
+using LockStepBlazor.Data.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UWPLockStep.ApplicationLayer.DrugInteractions;
@@ -14,8 +16,10 @@ namespace LockStepBlazor.Data
     {
         Task<IGetDrugInteractions.Model> GetDrugInteractionListAsync(List<string> rxcuis);
         Task<IGetFhirMedications.Model> GetMedicationRequestsAsync(string id);
+        Task<GetPatientList.Model> GetPatientListAsync(string firstName = null, string lastName = null);
         Task<GetPatient.Model> GetPatientAsync(string id);
-        //Task<PatientData> GetPatientDataAsync(string id);
+        Task<NavigateBundle.Model> NavigateBundleAsync(Bundle bundle, PageDirection nav);
         Task<GetRxCuiListAPI.Model> GetRxCuisAsync(List<MedicationConceptDTO> requests);
+
     }
 }

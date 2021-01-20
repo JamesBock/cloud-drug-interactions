@@ -24,10 +24,10 @@ namespace LockStepBlazor.Handlers
 
         public override async Task<IGetFhirMedications.Model> Handle(IGetFhirMedications.Query request, CancellationToken cancellationToken)
         {
-            await ParseMedicationsAsync(MedicationJSONString.ParseMedsAsync());
+            var meds = await ParseMedicationsAsync(MedicationJSONString.ParseMedsAsync());
             var res = new IGetFhirMedications.Model();
 
-            meds.ForEach(dto=> res.Requests.Add(dto));
+            meds.ToList().ForEach(dto=> res.Requests.Add(dto));
             
             return res;
 

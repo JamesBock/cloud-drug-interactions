@@ -8,9 +8,10 @@
         <div class="container-fluid" style="padding-top:20px"  >
             
 
-            @if (patientdata == null)
+            @if (Patients.Count == 0)
             {
-                <p><em>Loading...</em></p>
+                <p><em>Drug Interations from UNMLS</em></p>
+               
             }
             else
             {

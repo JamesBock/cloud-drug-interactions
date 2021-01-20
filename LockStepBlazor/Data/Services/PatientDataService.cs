@@ -15,6 +15,7 @@ using UWPLockStep.ApplicationLayer.Patients.Queries;
 using UWPLockStep.Domain.Common;
 using UWPLockStep.ApplicationLayer.MediatrExtensions;
 using UWPLockStep.ApplicationLayer.Interfaces.MediatR;
+using Hl7.Fhir.Rest;
 
 namespace LockStepBlazor.Data.Services
 {
@@ -75,18 +76,22 @@ namespace LockStepBlazor.Data.Services
             }).ConfigureAwait(false);
 
         }
-        //public async Task<PatientData> GetPatientDataAsync(string id)
-        //{
-        //    var waiter = await GetPatient(id);
-        //    var newx = waiter.QueriedPatient.FhirPatient.Name[0].Given;
+        public async Task<GetPatientList.Model> GetPatientListAsync(string firstName, string lastName)
+        {
+            return await mediator.Send(new GetPatientList.Query()
+            {
+                FirstName = firstName,
+                LastName = lastName
+            }).ConfigureAwait(false);
+        }
+        public async Task<NavigateBundle.Model> NavigateBundleAsync(Bundle bundle, PageDirection nav)
+        {
+            return await mediator.Send(new NavigateBundle.Query()
+            {
+                Bundle = bundle,
+                Nav = nav
+            }).ConfigureAwait(false);
+        }
 
-        //    return new PatientData
-        //    {
-        //        FullName = $"{waiter.QueriedPatient.LastName}, {string.Join(" ", newx)}",
-        //        BirthDay = waiter.QueriedPatient.DateOfBirth,
-        //        ConceptionDay = waiter.QueriedPatient.DateOfConception
-
-        //    };
-        //}
     }
 }

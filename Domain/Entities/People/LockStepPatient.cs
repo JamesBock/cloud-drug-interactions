@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Hl7.Fhir.Model;
+using UWPLockStep.Domain.Common;
 
 namespace UWPLockStep.Domain.Entities.People
 {
@@ -22,7 +23,8 @@ namespace UWPLockStep.Domain.Entities.People
         }
         public Patient FhirPatient { get; set; }
 
-       public List<string> GivenNames { get; set; } = new List<string>();
+        public List<MedicationConceptDTO> Medications { get; set; } = new List<MedicationConceptDTO>();
+        public List<string> GivenNames { get; set; } = new List<string>();
 
         public string LastName { get; set; }
         
