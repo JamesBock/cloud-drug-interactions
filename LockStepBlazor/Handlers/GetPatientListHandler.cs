@@ -29,8 +29,8 @@ namespace LockStepBlazor.Handlers
                 request.FirstName = request.FirstName?.ToLower();
                 request.FirstName = request.FirstName?.Trim();
 
-                queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Text);
-                paramsList.Add($"Patient?given:contains={request.FirstName}");
+                queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Text).LimitTo(10);
+                paramsList.Add($"given:contains={request.FirstName}");
                 // queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Count);
                 //use this for a execute batch but for Medicaions
             }
@@ -41,8 +41,9 @@ namespace LockStepBlazor.Handlers
                 request.LastName = request.LastName?.ToLower();
                 request.LastName = request.LastName?.Trim();
 
-                queryNames.Where($"family={request.LastName}").SummaryOnly(SummaryType.Text);
-                paramsList.Add($"Patient?family:contains={request.LastName}");
+                queryNames.Where($"family={request.LastName}").SummaryOnly(SummaryType.Text).LimitTo(10);
+                //var p = queryNames.ToParameters().;
+                paramsList.Add($"name:contains={request.LastName}");
             }
 
             // var trans = new TransactionBuilder(client.Endpoint);
@@ -58,8 +59,9 @@ namespace LockStepBlazor.Handlers
             //     )
             //     .ToList();
            
-           
-            var pats = await client.SearchAsync<Patient>(paramsList.ToArray(), default, 10);
+             //these shpuld be identical
+            // var pats = await client.SearchAsync<Patient>(paramsList.ToArray(), default, 10/*, SummaryType.Text*/);
+            var pats = await client.SearchAsync<Patient>(queryNames);
             return new GetPatientList.Model()
             {
                 Patients = pats

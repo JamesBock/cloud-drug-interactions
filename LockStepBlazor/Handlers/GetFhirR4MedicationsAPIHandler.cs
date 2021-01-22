@@ -28,25 +28,26 @@ namespace LockStepBlazor.Handlers
 
         public override async Task<IGetFhirMedications.Model> Handle(IGetFhirMedications.Query request, CancellationToken cancellationToken)
         {
-            var taskList = new List<Task<HttpResponseMessage>>();//launch multiple http request from here
+            var taskList = new List<Task<Bundle>>();//launch multiple http request from here
             //implementation will vary based on FHIR version
-            var q = new SearchParams()
+            var medRequestQuery = new SearchParams()
                              .Where($"patient={request.PatientId}")
-                             .Include("MedicationRequest:medication").LimitTo(1000);//These are only added to the bundle if there is a Medication Resource referenced, not if there is a CodeableConcept describing the Medication
+                             .Include("MedicationRequest:medication").LimitTo(100);//These are only added to the bundle if there is a Medication Resource referenced, not if there is a CodeableConcept describing the Medication
 
-            var t = new SearchParams()
+            var medStatementQuery = new SearchParams()
                              .Where($"patient={request.PatientId}")
-                             .Include("MedicationStatement:medication").LimitTo(1000);
+                             .Include("MedicationStatement:medication").LimitTo(100);
 
             var trans = new TransactionBuilder(client.Endpoint);
-            trans = trans.Search(q, "MedicationRequest").Search(t, "MedicationStatement");
+            trans = trans.Search(medRequestQuery, "MedicationRequest").Search(medStatementQuery, "MedicationStatement");
             //var result = await _client.SearchAsync<MedicationRequest>(q);
             var bundie = trans.ToBundle();
             var tResult = client.TransactionAsync(bundie);
-
+            taskList.Add(client.SearchAsync<MedicationRequest>(medRequestQuery));
+            taskList.Add(client.SearchAsync<MedicationStatement>(medStatementQuery));
             var res = new IGetFhirMedications.Model();
             
-            var meds =  await ParseMedicationsAsync(tResult).ConfigureAwait(false);//if this is not awaited, the  channel will start to TryRead before anything is in the channel and an empty res in returned
+            var meds =  await ParseMedicationsAsync(taskList).ConfigureAwait(false);//if this is not awaited, the  channel will start to TryRead before anything is in the channel and an empty res in returned
 
             meds.ToList().ForEach(dto => 
             

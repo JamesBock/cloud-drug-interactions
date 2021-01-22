@@ -30,9 +30,12 @@ namespace LockStepBlazor.Handlers
 
         public abstract Task<IGetFhirMedications.Model> Handle(IGetFhirMedications.Query request, CancellationToken cancellationToken);
 
-        protected async Task<IEnumerable<MedicationConceptDTO>> ParseMedicationsAsync(Task<Bundle> result)
+        protected async Task<IEnumerable<MedicationConceptDTO>> ParseMedicationsAsync(List<Task<Bundle>> result)
         {
-            var bund =  await result;
+            // Task.WhenAny(result)
+
+
+            // var bund =  await result;
             var medos = MedsToChannel(bund.Entry
                                 .Select(e => e.Resource as Bundle)
                                 .SelectMany(b => b.Entry
