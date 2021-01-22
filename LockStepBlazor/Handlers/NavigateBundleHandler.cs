@@ -12,9 +12,9 @@ namespace LockStepBlazor.Handlers
 {
     public class NavigateBundleHandler : NavigateBundle.IHandler
     {
-        private readonly IFhirClient client;
+        private readonly FhirClient client;
 
-        public NavigateBundleHandler(IFhirClient client)
+        public NavigateBundleHandler(FhirClient client)
         {
             this.client = client;
 

@@ -48,7 +48,7 @@ namespace LockStepBlazor
             //This registration is still needed also to register the correct Handler to the PatientDateService.
             services.AddSingleton<IGetFhirMedications, GetFhirMedicationsAPI>();
             //services.AddMediatR(typeof(GetFhirMedicationsJSONHandler));//This did not fix it.
-            services.AddSingleton<IFhirClient, FhirClient>(c=> new FhirClient(Constants.FHIR_URI) { PreferredFormat = ResourceFormat.Json });
+            services.AddSingleton<FhirClient, GoogleFhirClient>(c=> new GoogleFhirClient(Constants.GOOGLE_FHIR_STICHED_URI) { PreferredFormat = ResourceFormat.Json });
 
             services.AddHttpClient<IRequestHandler<GetRxCuiListAPI.Query, GetRxCuiListAPI.Model>, GetRxCuiListAPIHandler>("RXCUI", client =>
             { client.BaseAddress = new Uri(Constants.RXCUI_API_URI); });

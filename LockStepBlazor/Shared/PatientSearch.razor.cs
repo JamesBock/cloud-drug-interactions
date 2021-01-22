@@ -86,9 +86,9 @@ namespace LockStepBlazor.Shared
             {
                 var patient = new LockStepPatient();
                 Hl7.Fhir.Model.Patient p = (Hl7.Fhir.Model.Patient)e.Resource;
-                var meds = PatientService.GetMedicationRequestsAsync(p.Id).GetAwaiter().GetResult();
+                //var meds = PatientService.GetMedicationRequestsAsync(p.Id).GetAwaiter().GetResult();
                 patient.FhirPatient = p;
-                patient.Medications = meds.Requests;
+                // patient.Medications = meds.Requests;
                 Patients.Add(patient);
             }
         }

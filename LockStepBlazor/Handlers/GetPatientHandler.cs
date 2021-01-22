@@ -10,9 +10,9 @@ namespace LockStepBlazor.Handlers
 {
     public class GetPatientHandler : GetPatient.IHandler
     {
-        private readonly IFhirClient client;
+        private readonly FhirClient client;
 
-        public GetPatientHandler(IFhirClient client)
+        public GetPatientHandler(FhirClient client)
         {
             this.client = client;
             

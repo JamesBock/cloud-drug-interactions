@@ -3,7 +3,38 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-
+/* Split the screen in half */
+.split {
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+/* Control the left side */
+.left {
+    left: 0;
+   
+  }
+  /* If you want the content centered horizontally and vertically */
+.centered {
+    position: relative;
+    top: 8%;
+    left: 10%;
+    transform: translate(0%, 0%);
+    text-align: center;
+  }
+  /* Control the right side */
+  .right {
+    
+    right: 0;
+    
+  }
+  .hidden{
+      visibility: hidden;
+  }
 a, .btn-link {
     color: #0366d6;
     
@@ -18,7 +49,7 @@ a, .btn-link {
     background-color:transparent;
     fill:transparent;
 }*/
-app {
+ app    {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -37,7 +68,7 @@ app {
    
     font-size: .8em;
    
-   
+    
 }
 
     .main .top-row {
@@ -145,7 +176,7 @@ app {
     right: 0.75rem;
     top: 0.5rem;
 }
-
+ 
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         /*display: none;*/
@@ -153,7 +184,6 @@ app {
         top: 0;
         /*font-size: 75%;*/
     }
-
     .main .top-row.auth {
         justify-content: space-between;
     }
@@ -162,7 +192,7 @@ app {
         margin-left: 0;
     }
     .main .content{
-        /*font-size: 75%;*/
+        font-size: 100%;
     }
 }
 

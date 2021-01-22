@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+</Project>
+  <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
@@ -17,9 +21,11 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <PackageReference Include="Hl7.Fhir.ElementModel" Version="1.7.0" />
-    <PackageReference Include="Hl7.Fhir.Support" Version="1.7.0" />
-    <PackageReference Include="Hl7.Fhir.Support.Poco" Version="1.7.0" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.49.0" />
+    <PackageReference Include="Hl7.Fhir.ElementModel" Version="2.0.1" />
+    <PackageReference Include="Hl7.Fhir.R4" Version="2.0.1" />
+    <PackageReference Include="Hl7.Fhir.Support" Version="2.0.1" />
+    <PackageReference Include="Hl7.Fhir.Support.Poco" Version="2.0.1" />
     <PackageReference Include="MatBlazor" Version="2.4.3" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />

@@ -18,12 +18,12 @@ namespace LockStepBlazor.Handlers
 {
     public abstract class GetFhirMedicationsHandler : IGetFhirMedications.IHandler
     {
-        protected readonly IFhirClient client;
+        protected readonly FhirClient client;
 
         //protected readonly Channel<MedicationConceptDTO> channel = Channel.CreateUnbounded<MedicationConceptDTO>();
         //protected readonly List<MedicationConceptDTO> meds = new List<MedicationConceptDTO>();
 
-        public GetFhirMedicationsHandler(IFhirClient client)
+        public GetFhirMedicationsHandler(FhirClient client)
         {
             this.client = client;
         }
@@ -32,7 +32,7 @@ namespace LockStepBlazor.Handlers
 
         protected async Task<IEnumerable<MedicationConceptDTO>> ParseMedicationsAsync(Task<Bundle> result)
         {
-            var bund = await result;
+            var bund =  await result;
             var medos = MedsToChannel(bund.Entry
                                 .Select(e => e.Resource as Bundle)
                                 .SelectMany(b => b.Entry
@@ -106,9 +106,9 @@ namespace LockStepBlazor.Handlers
         {
             foreach (var item in resources)
             {
-                switch (item.ResourceType)
+                switch (item.TypeName)
                 {
-                    case ResourceType.Medication://will never have a contained medication
+                    case "Medication"://will never have a contained medication
                         var med = item as Medication;
 
                         yield return (med.Code.Coding.Select(s =>
@@ -144,11 +144,11 @@ namespace LockStepBlazor.Handlers
 
                         break;
                     //if the Medication element is a Reference to another Medication Resource, the MedicationRequest is not kept but is referenced in the Medication that is included. This is the desired behavior but im not certain why its happening
-                    case ResourceType.MedicationRequest:
+                    case "MedicationRequest":
                         var medReq = item as MedicationRequest;
                         var medReqMed = medReq.Medication as CodeableConcept;//this is null when medication is contained
-                        var codeReq = medReq.Contained.Select(x => x.ResourceType == ResourceType.Medication ? x as Medication : null);
-                        if (codeReq.Any(m => m.ResourceType == ResourceType.Medication))//this should pick out the contained resource if it exists
+                        var codeReq = medReq.Contained.Select(x => x.TypeName == "Medication" ? x as Medication : null);
+                        if (codeReq.Any(m => m.TypeName == "Medication"))//this should pick out the contained resource if it exists
                         {
                             yield return codeReq.Select(s => new MedicationConceptDTO()
                             {
@@ -204,15 +204,15 @@ namespace LockStepBlazor.Handlers
 
                         }
                     //TODO: need null checks here
-                    case ResourceType.MedicationStatement:
+                    case "MedicationStatement":
                         var medState = item as MedicationStatement;
                         var medStateMed = medState.Medication as CodeableConcept;
                         var codeState = medState.Contained
-                            .Select(x => x.ResourceType == ResourceType.Medication ? x as Medication : null)
+                            .Select(x => x.TypeName == "Medication" ? x as Medication : null)
                             .ToList();
                        
                        
-                        if (codeState.Any(m => m.ResourceType == ResourceType.Medication))
+                        if (codeState.Any(m => m.TypeName == "Medication"))
                         {
                             yield return codeState.SelectMany(p=> p.Code.Coding)
                                      

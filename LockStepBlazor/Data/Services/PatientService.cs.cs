@@ -15,9 +15,9 @@ namespace LockStepBlazor.Data.Services
 {
     public class PatientService
     {
-        private readonly IFhirClient client;
+        private readonly FhirClient client;
 
-        public PatientService(IFhirClient client)
+        public PatientService(FhirClient client)
         {
             this.client = client;
 

@@ -20,11 +20,11 @@ namespace LockStepBlazor.Pages
         [Inject]
         protected IPatientDataService PatientService { get; set; }
 
-        protected List<MedicationConceptDTO> medicationConcepts = new List<MedicationConceptDTO>();
+        protected List<MedicationConceptDTO> MedicationConcepts = new List<MedicationConceptDTO>();
 
-        protected List<MedicationInteractionPair> interactions = new List<MedicationInteractionPair>();
+        protected List<MedicationInteractionPair> Interactions = new List<MedicationInteractionPair>();
 
-        protected Dictionary<Guid, bool> collapseDrugInteraction = new Dictionary<Guid, bool>();
+        protected Dictionary<Guid, bool> CollapseDrugInteraction = new Dictionary<Guid, bool>();
 
         [Parameter]
         public string PatientId { get; set; }
@@ -74,7 +74,7 @@ namespace LockStepBlazor.Pages
             #region Live APIs
 
             var requestResult = await PatientService.GetMedicationRequestsAsync(PatientId)
-                .ContinueWith(c => medicationConcepts = c.Result.Requests);
+                .ContinueWith(c => MedicationConcepts = c.Result.Requests);
             if (requestResult.Count > 0)
             {
                 var rxcuisResult = await PatientService.GetRxCuisAsync((requestResult));
@@ -84,21 +84,22 @@ namespace LockStepBlazor.Pages
                 //DrugInteractionParser.ParseDrugInteractions(await drugResult.Meds);
                 await foreach (var drug in DrugInteractionParser.ParseDrugInteractionsAsync(await drugResult.Meds))
                 {
-                    collapseDrugInteraction.Add(drug.InteractionId, true);
+                    CollapseDrugInteraction.Add(drug.InteractionId, true);
 
-                    medicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item1.RxCui)
+                    MedicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item1.RxCui)
                                             .Select(z => (drug.MedicationPair.Item1.DisplayName = z.Text,
                                            drug.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
                                            drug.MedicationPair.Item1.Prescriber = z.Prescriber,
                                            drug.MedicationPair.Item1.FhirType = z.FhirType,
                                            drug.MedicationPair.Item1.ResourceId = z.ResourceId)).ToList();
-                    medicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item2.RxCui)
+                    MedicationConcepts.Where(r => r.RxCui == drug.MedicationPair.Item2.RxCui)
                                             .Select(z => (drug.MedicationPair.Item2.DisplayName = z.Text,
                                            drug.MedicationPair.Item2.TimeOrdered = z.TimeOrdered,
                                            drug.MedicationPair.Item2.Prescriber = z.Prescriber,
                                            drug.MedicationPair.Item2.FhirType = z.FhirType,
                                            drug.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
-                    interactions.Add(drug);
+                    Interactions.Add(drug);
+                    hideInteractions = false;
                     StateHasChanged();
                 }
 
@@ -217,21 +218,21 @@ namespace LockStepBlazor.Pages
 
         public void OnNext(MedicationInteractionPair value)
         {
-            collapseDrugInteraction.Add(value.InteractionId, true);
+            CollapseDrugInteraction.Add(value.InteractionId, true);
 
-            medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item1.RxCui)
+            MedicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item1.RxCui)
                                     .Select(z => (value.MedicationPair.Item1.DisplayName = z.Text,
                                    value.MedicationPair.Item1.TimeOrdered = z.TimeOrdered,
                                    value.MedicationPair.Item1.Prescriber = z.Prescriber,
                                    value.MedicationPair.Item1.FhirType = z.FhirType,
                                    value.MedicationPair.Item1.ResourceId = z.ResourceId)).ToList();
-            medicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item2.RxCui)
+            MedicationConcepts.Where(r => r.RxCui == value.MedicationPair.Item2.RxCui)
                                     .Select(z => (value.MedicationPair.Item2.DisplayName = z.Text,
                                    value.MedicationPair.Item2.TimeOrdered = z.TimeOrdered,
                                    value.MedicationPair.Item2.Prescriber = z.Prescriber,
                                    value.MedicationPair.Item2.FhirType = z.FhirType,
                                    value.MedicationPair.Item2.ResourceId = z.ResourceId)).ToList();
-            interactions.Add(value);
+            Interactions.Add(value);
             InvokeAsync(() => StateHasChanged());
         }
     }

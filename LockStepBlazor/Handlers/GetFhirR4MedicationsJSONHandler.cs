@@ -18,13 +18,13 @@ namespace LockStepBlazor.Handlers
 {
     public class GetFhirR4MedicationsJSONHandler : GetFhirMedicationsHandler
     {
-        public GetFhirR4MedicationsJSONHandler(IFhirClient client) : base(client)
+        public GetFhirR4MedicationsJSONHandler(FhirClient client) : base(client)
         {
         }
 
         public override async Task<IGetFhirMedications.Model> Handle(IGetFhirMedications.Query request, CancellationToken cancellationToken)
         {
-            var meds = await ParseMedicationsAsync(MedicationJSONString.ParseMedsAsync());
+            var meds =  await ParseMedicationsAsync(MedicationJSONString.ParseMedsAsync());
             var res = new IGetFhirMedications.Model();
 
             meds.ToList().ForEach(dto=> res.Requests.Add(dto));

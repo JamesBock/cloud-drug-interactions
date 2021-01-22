@@ -12,9 +12,9 @@ namespace LockStepBlazor.Handlers
 {
     public class GetPatientListHandler : GetPatientList.IHandler
     {
-        private readonly IFhirClient client;
+        private readonly FhirClient client;
 
-        public GetPatientListHandler(IFhirClient client)
+        public GetPatientListHandler(FhirClient client)
         {
             this.client = client;
 
@@ -22,13 +22,17 @@ namespace LockStepBlazor.Handlers
 
         public async Task<GetPatientList.Model> Handle(GetPatientList.Query request, CancellationToken cancellationToken)
         {
+            var paramsList = new List<string>();
             var queryNames = new SearchParams();
             if (!string.IsNullOrEmpty(request.FirstName))
             {
                 request.FirstName = request.FirstName?.ToLower();
                 request.FirstName = request.FirstName?.Trim();
 
-                queryNames.Where($"given={request.FirstName}");
+                queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Text);
+                paramsList.Add($"Patient?given:contains={request.FirstName}");
+                // queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Count);
+                //use this for a execute batch but for Medicaions
             }
 
             if (!string.IsNullOrEmpty(request.LastName))
@@ -37,7 +41,8 @@ namespace LockStepBlazor.Handlers
                 request.LastName = request.LastName?.ToLower();
                 request.LastName = request.LastName?.Trim();
 
-                queryNames.Where($"family={request.LastName}");
+                queryNames.Where($"family={request.LastName}").SummaryOnly(SummaryType.Text);
+                paramsList.Add($"Patient?family:contains={request.LastName}");
             }
 
             // var trans = new TransactionBuilder(client.Endpoint);
@@ -54,10 +59,10 @@ namespace LockStepBlazor.Handlers
             //     .ToList();
            
            
-
+            var pats = await client.SearchAsync<Patient>(paramsList.ToArray(), default, 10);
             return new GetPatientList.Model()
             {
-                Patients = await client.SearchAsync<Patient>(queryNames.LimitTo(10))
+                Patients = pats
                 
                           
 
