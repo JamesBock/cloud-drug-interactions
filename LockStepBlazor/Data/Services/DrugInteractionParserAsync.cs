@@ -1,4 +1,5 @@
-﻿using LockStepBlazor.Shared;
+﻿using LockStepBlazor.Data.Models;
+using LockStepBlazor.Shared;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

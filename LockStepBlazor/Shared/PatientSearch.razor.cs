@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UWPLockStep.Domain.Common;
-using UWPLockStep.Domain.Entities.People;
 
 namespace LockStepBlazor.Shared
 {

@@ -2,11 +2,10 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.Patients.Queries;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
 using System.Collections.Generic;
+using LockStepBlazor.Application.Fhir.Queries;
 
 namespace LockStepBlazor.Handlers
 {
@@ -29,7 +28,7 @@ namespace LockStepBlazor.Handlers
                 request.FirstName = request.FirstName?.ToLower();
                 request.FirstName = request.FirstName?.Trim();
 
-                queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Text).LimitTo(10);
+                queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Text);
                 paramsList.Add($"given:contains={request.FirstName}");
                 // queryNames.Where($"given={request.FirstName}").SummaryOnly(SummaryType.Count);
                 //use this for a execute batch but for Medicaions
@@ -41,7 +40,7 @@ namespace LockStepBlazor.Handlers
                 request.LastName = request.LastName?.ToLower();
                 request.LastName = request.LastName?.Trim();
 
-                queryNames.Where($"family={request.LastName}").SummaryOnly(SummaryType.Text).LimitTo(10);
+                queryNames.Where($"family={request.LastName}").SummaryOnly(SummaryType.Text);
                 //var p = queryNames.ToParameters().;
                 paramsList.Add($"name:contains={request.LastName}");
             }
@@ -61,7 +60,7 @@ namespace LockStepBlazor.Handlers
            
              //these shpuld be identical
             // var pats = await client.SearchAsync<Patient>(paramsList.ToArray(), default, 10/*, SummaryType.Text*/);
-            var pats = await client.SearchAsync<Patient>(queryNames);
+            var pats = await client.SearchAsync<Patient>(queryNames.LimitTo(10));
             return new GetPatientList.Model()
             {
                 Patients = pats

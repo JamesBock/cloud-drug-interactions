@@ -1,14 +1,13 @@
 ﻿using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
+using LockStepBlazor.Application;
+using LockStepBlazor.Application.Fhir.Queries;
+using LockStepBlazor.Application.Interfaces;
 using LockStepBlazor.Data.Models;
 using LockStepBlazor.Data.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.DrugInteractions;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
-using UWPLockStep.ApplicationLayer.Interfaces.MediatR;
-using UWPLockStep.ApplicationLayer.Patients.Queries;
-using UWPLockStep.Domain.Common;
+
 
 namespace LockStepBlazor.Data
 {

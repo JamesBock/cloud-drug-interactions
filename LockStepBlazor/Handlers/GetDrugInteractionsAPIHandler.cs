@@ -1,4 +1,5 @@
-﻿using LockStepBlazor.Data;
+﻿using LockStepBlazor.Application.Interfaces;
+using LockStepBlazor.Data;
 using LockStepBlazor.Shared;
 using Newtonsoft.Json.Linq;
 using System;
@@ -8,9 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.DrugInteractions;
-using UWPLockStep.ApplicationLayer.Interfaces.MediatR;
-using UWPLockStep.Domain.Common;
+
 
 namespace LockStepBlazor.Handlers
 {

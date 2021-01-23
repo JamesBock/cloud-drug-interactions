@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using Newtonsoft.Json.Linq;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
 
 
 

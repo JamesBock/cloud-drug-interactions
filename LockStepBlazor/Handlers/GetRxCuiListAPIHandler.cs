@@ -5,13 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using Newtonsoft.Json.Linq;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
 using System.Net.Http;
 using System.Diagnostics;
 using System.Threading.Channels;
 using Task = System.Threading.Tasks.Task;
-using UWPLockStep.Domain.Common;
-using Microsoft.AspNetCore.Mvc;
+using LockStepBlazor.Data.Models;
+using LockStepBlazor.Application.Fhir.Queries;
 
 namespace LockStepBlazor.Handlers
 {

@@ -9,13 +9,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.DrugInteractions;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
-using UWPLockStep.ApplicationLayer.Patients.Queries;
-using UWPLockStep.Domain.Common;
-using UWPLockStep.ApplicationLayer.MediatrExtensions;
-using UWPLockStep.ApplicationLayer.Interfaces.MediatR;
 using Hl7.Fhir.Rest;
+using LockStepBlazor.Application.Interfaces;
+using LockStepBlazor.Application.Fhir.Queries;
+using LockStepBlazor.Application.Extensions;
+using LockStepBlazor.Application;
 
 namespace LockStepBlazor.Data.Services
 {

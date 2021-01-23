@@ -1,27 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using LockStepBlazor.Data;
-using System.Reflection;
 using MediatR;
-using UWPLockStep.ApplicationLayer.Patients.Queries;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
-
 using LockStepBlazor.Data.Services;
 using LockStepBlazor.Handlers;
 using Hl7.Fhir.Rest;
 using LockStepBlazor.Shared;
-using UWPLockStep.ApplicationLayer.DrugInteractions;
-using UWPLockStep.ApplicationLayer.Interfaces.MediatR;
-using System.Threading.Channels;
+using LockStepBlazor.Application.Interfaces;
+using LockStepBlazor.Application.Fhir.Queries;
+using LockStepBlazor.Application.DrugInteractions;
 
 namespace LockStepBlazor
 {
@@ -48,7 +39,7 @@ namespace LockStepBlazor
             //This registration is still needed also to register the correct Handler to the PatientDateService.
             services.AddSingleton<IGetFhirMedications, GetFhirMedicationsAPI>();
             //services.AddMediatR(typeof(GetFhirMedicationsJSONHandler));//This did not fix it.
-            services.AddSingleton<FhirClient, GoogleFhirClient>(c=> new GoogleFhirClient(Constants.GOOGLE_FHIR_STICHED_URI) { PreferredFormat = ResourceFormat.Json });
+            services.AddSingleton<FhirClient, GoogleFhirClient>(c=> new GoogleFhirClient(Constants.GOOGLE_FHIR_STICHED_URI) { Settings = new FhirClientSettings(){ PreferredFormat = ResourceFormat.Json }});
 
             services.AddHttpClient<IRequestHandler<GetRxCuiListAPI.Query, GetRxCuiListAPI.Model>, GetRxCuiListAPIHandler>("RXCUI", client =>
             { client.BaseAddress = new Uri(Constants.RXCUI_API_URI); });

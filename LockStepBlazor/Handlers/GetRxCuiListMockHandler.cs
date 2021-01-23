@@ -1,4 +1,6 @@
 ﻿using Hl7.Fhir.Model;
+using LockStepBlazor.Application.Fhir.Queries;
+using LockStepBlazor.Data.Models;
 using Microsoft.AspNetCore.Http.Connections;
 using Newtonsoft.Json.Linq;
 using System;
@@ -9,8 +11,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
-using UWPLockStep.Domain.Common;
 using Task = System.Threading.Tasks.Task;
 
 namespace LockStepBlazor.Handlers

@@ -3,6 +3,8 @@ using Hl7.Fhir.FhirPath;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
+using LockStepBlazor.Application.Interfaces;
+using LockStepBlazor.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,8 +12,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.Interfaces.MediatR;
-using UWPLockStep.Domain.Common;
 using Task = System.Threading.Tasks.Task;
 
 namespace LockStepBlazor.Handlers
@@ -32,15 +32,22 @@ namespace LockStepBlazor.Handlers
 
         protected async Task<IEnumerable<MedicationConceptDTO>> ParseMedicationsAsync(List<Task<Bundle>> result)
         {
-            // Task.WhenAny(result)
+            var medos = new List<MedicationConceptDTO>();
+            while (result.Count > 0)
+            {
 
+                var completedTask = await Task.WhenAny(result);
+                //TODO: The Requester is being included here now...need to handle this..may need to happen a level above
 
-            // var bund =  await result;
-            var medos = MedsToChannel(bund.Entry
-                                .Select(e => e.Resource as Bundle)
-                                .SelectMany(b => b.Entry
-                                .Select(e => e.Resource))
-                                .ToList());
+                //new PrescriberDTO to with name etc...make part of FhirMedications.Model?
+                medos.AddRange(
+                             MedsToChannel(completedTask
+                                 .GetAwaiter().GetResult().Entry
+                                 .Select(e => e.Resource)
+                                 .ToList())
+                );
+                result.Remove(completedTask);
+            }
             return medos;
 
         }
@@ -125,7 +132,7 @@ namespace LockStepBlazor.Handlers
                                                             .Where(m => (m.Medication as ResourceReference).Reference == $"Medication/{med.Id}")
                                                             .First().Requester == null
                                                                 ? "Prescriber Unknown"
-                                                                : resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().Requester.ToString(),
+                                                                : resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().Requester.Display.ToString(),
 
                                                       //TimeOrdered = resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().AuthoredOnElement == null
                                                       //    ? resources.Select(p => p as MedicationRequest).Where(r => (r.Medication as ResourceReference).Reference == $"Medication/{med.Id}").First().AuthoredOnElement.ToDateTimeOffset(TimeZoneInfo.Local.BaseUtcOffset)
@@ -157,7 +164,7 @@ namespace LockStepBlazor.Handlers
                             {
                                 Prescriber = medReq.Requester == null
                                                           ? "Prescriber Unknown"
-                                                          : medReq.Requester.Reference,
+                                                          : medReq.Requester.Display,
                                 TimeOrdered = medReq.AuthoredOnElement == null
                                                           ? DateTimeOffset.UtcNow
                                                           : medReq.AuthoredOnElement.ToDateTimeOffset(TimeZoneInfo.Local.BaseUtcOffset),
@@ -170,7 +177,7 @@ namespace LockStepBlazor.Handlers
                                 Text = s.Code.Coding.FirstOrDefault().Display
                             }).FirstOrDefault()/*.ToList()*/;
 
-                           // q.ForEach(c => meds.Add(c));//if this isn't sent ToList, it doesnt add to the channel
+                            // q.ForEach(c => meds.Add(c));//if this isn't sent ToList, it doesnt add to the channel
 
                             break;
                         }
@@ -213,32 +220,32 @@ namespace LockStepBlazor.Handlers
                         var codeState = medState.Contained
                             .Select(x => x.TypeName == "Medication" ? x as Medication : null)
                             .ToList();
-                       
-                       
+
+
                         if (codeState.Any(m => m.TypeName == "Medication"))
                         {
-                            yield return codeState.SelectMany(p=> p.Code.Coding)
-                                     
+                            yield return codeState.SelectMany(p => p.Code.Coding)
+
                                      .Select(s =>
                                                  new MedicationConceptDTO()
                                                  {
-                                                    //  Prescriber = medState.InformationSource == null
-                                                    //   ? ""
-                                                    //   : medState.InformationSource.Reference,
-                                                    //  TimeOrdered = medState.DateAssertedElement == null
-                                                    //   ? DateTimeOffset.UtcNow
-                                                    //   : medState.DateAssertedElement.ToDateTimeOffset(TimeZoneInfo.Local.BaseUtcOffset),
-                                                    //  ResourceId = item.Id,
-                                                    //  FhirType = item.GetType()
-                                                    //   .ToString(),
-                                                    //  Sys = s.System
-                                                    //   .ToLower(),
-                                                    //  CodeString = s.Code,
+                                                     //  Prescriber = medState.InformationSource == null
+                                                     //   ? ""
+                                                     //   : medState.InformationSource.Reference,
+                                                     //  TimeOrdered = medState.DateAssertedElement == null
+                                                     //   ? DateTimeOffset.UtcNow
+                                                     //   : medState.DateAssertedElement.ToDateTimeOffset(TimeZoneInfo.Local.BaseUtcOffset),
+                                                     //  ResourceId = item.Id,
+                                                     //  FhirType = item.GetType()
+                                                     //   .ToString(),
+                                                     //  Sys = s.System
+                                                     //   .ToLower(),
+                                                     //  CodeString = s.Code,
                                                      //Text = medStateMed.Text
                                                      Text = s.Display
                                                  }
                                                 ).FirstOrDefault();
-                                             
+
                             break;
                         }
                         else

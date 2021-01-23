@@ -2,9 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.Patients.Queries;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
+using LockStepBlazor.Data.Models;
+using LockStepBlazor.Application;
 
 namespace LockStepBlazor.Handlers
 {
@@ -17,7 +18,7 @@ namespace LockStepBlazor.Handlers
             this.client = client;
             
         }
-
+    
         public async Task<GetPatient.Model> Handle(GetPatient.Query request, CancellationToken cancellationToken)
         {
             #region how nested Bundle was handled
@@ -49,7 +50,7 @@ namespace LockStepBlazor.Handlers
 
             //Create map from FHIR Patient to your Patient.
             //Decided to see what it would be like if my Patient type inheirited FHIRs. 
-            var modelPatient = new UWPLockStep.Domain.Entities.People.LockStepPatient()
+            var modelPatient = new LockStepPatient()
             {
                 FhirPatient = qResult,
                 LastName = qResult.Name[0].Family,

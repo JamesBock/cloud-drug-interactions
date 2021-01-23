@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.Interfaces.MediatR;
+using LockStepBlazor.Application.Interfaces;
 
 namespace LockStepBlazor.Handlers
 {

@@ -23,5 +23,5 @@ WORKDIR /app
 COPY --from=build /app/out ./
 
 
-ENTRYPOINT ["dotnet", "DrugInteractions.dll"]
+ENTRYPOINT ["dotnet", "LockStepBlazor.dll"]
 

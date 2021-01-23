@@ -2,11 +2,10 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UWPLockStep.ApplicationLayer.Patients.Queries;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
-using UWPLockStep.ApplicationLayer.FHIR.Queries;
 using System.Collections.Generic;
+using LockStepBlazor.Application.Fhir.Queries;
 
 namespace LockStepBlazor.Handlers
 {
