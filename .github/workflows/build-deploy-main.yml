@@ -22,7 +22,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-     - uses: google-github-actions/setup-gcloud@main
+     - uses: google-github-actions/setup-gcloud@master
        with:
           version: '290.0.1'
           project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
