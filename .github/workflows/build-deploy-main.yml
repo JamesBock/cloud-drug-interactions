@@ -13,18 +13,18 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-
-env: 
-  SA_KEY: ${{ secrets.REPO_SA_KEY }}
-  PROJECT_ID: ${{ secrets.REPO_PROJECT_ID }}
 jobs:
   # This workflow contains a single job called "build"
   setup-build-deploy:
     name: Setup, Build, and Deploy
     # The type of runner that the job will run on
-    # environment: GCP_MYSTIC_SOUND 
     runs-on: ubuntu-latest
 
+    environment: GCP_MYSTIC_SOUND
+    env: 
+      SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+      SA_EMAIL: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
+      PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -35,7 +35,7 @@ jobs:
       with:
           # version: "290.0.1"
           project_id: ${{env.PROJECT_ID}}
-          # service_account_email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
+          service_account_email: ${{ env.SA_EMAIL }}
           service_account_key: ${{env.SA_KEY}}
           export_default_credentials: true 
 
