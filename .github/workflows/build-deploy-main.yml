@@ -14,8 +14,6 @@ on:
   # workflow_dispatch:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  
- 
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
@@ -26,19 +24,20 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    - uses: actions/checkout@v2
     - name: Set up gcloud Cloud SDK environment
       uses: google-github-actions/setup-gcloud@master
 
+      with:
+          # version: "290.0.1"
+          project_id: mystic-sound-280300
+          # service_account_email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
+          service_account_key: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+          export_default_credentials: true 
+
+    - run: gcloud info
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # - uses: google-github-actions/setup-gcloud@master
-      with:
-          version: "290.0.1"
-          project_id: mystic-sound-280300
-          service_account_email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
-          service_account_key: ${{ secrets.CLOUD_BUILD_SA_KEY }}
-          export_default_credentials: false 
-    - run: gcloud info
-    - uses: actions/checkout@v2
       # Runs a single command using the runners shell
     - name: build docker image
       run: gcloud builds submit --tag gcr.io/mystic-sound-280300/drug-interactions
