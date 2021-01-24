@@ -40,26 +40,26 @@ jobs:
           project_id: ${{ env.PROJECT_ID }} 
           # service_account_email: ${{ env.SA_EMAIL }}
           service_account_key: ${{ env.SA_KEY }}
-          export_default_credentials: true 
+          # export_default_credentials: true 
 
     - run: gcloud info
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # - uses: google-github-actions/setup-gcloud@master
     #   # Runs a single command using the runners shell
-    # - name: Authorize Docker push
-    #   run: gcloud auth configure-docker --project ${{ env.PROJECT_ID }} 
+    - name: Authorize Docker push
+      run: gcloud auth configure-docker --project ${{ env.PROJECT_ID }} 
 
-    - name: Build
-      run: |-
-        gcloud builds submit \
-          --quiet \
-          --tag gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-      working-directory: ./LockStepBlazor
-
-    # - name: Build and Push Container
+    # - name: Build
     #   run: |-
-    #     docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} ./LockStepBlazor
-    #     # docker push gcr.io/$PROJECT_ID/drug-interactions:${{  github.sha }}
+    #     gcloud builds submit \
+    #       --quiet \
+    #       --tag gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ GITHUB_SHA }}
+    #   working-directory: ./LockStepBlazor
+
+    - name: Build and Push Container
+      run: |-
+        docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} ./LockStepBlazor
+        docker push gcr.io/$PROJECT_ID/drug-interactions:${{  github.sha }}
 
    
    
@@ -69,9 +69,9 @@ jobs:
     #   working-directory:
     #     ./LockStepBlazor
         # Runs a single command using the runners shell
-    - name: deploy docker image
-      run: |-
-        gcloud run deploy drug-interactions  --image gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{  github.sha }} --platform managed --region=us-central1
-      working-directory: ./LockStepBlazor \
+    # - name: deploy docker image
+    #   run: |-
+    #     gcloud run deploy --image gcr.io/${{ env.PROJECT_ID }}/${{ GITHUB_SHA }}:${{  github.sha }} --platform managed --region=us-central1
+    #   working-directory: ./LockStepBlazor \
       
    
