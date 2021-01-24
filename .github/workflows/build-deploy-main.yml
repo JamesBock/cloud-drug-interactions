@@ -10,9 +10,9 @@ on:
   pull_request:
     branches: [main]
 env:
-  google-project-id: ${{ env.GOOGLE_PROJECT_ID }}
-  google-sa-key: ${{ env.CLOUD_BUILD_SA_KEY }}
-  google-sa-email: ${{ env.CLOUD_BUILD_SA_EMAIL }}
+  google-project-id: ${{ secrets.GOOGLE_PROJECT_ID }}
+  google-sa-key: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+  google-sa-email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
 
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
