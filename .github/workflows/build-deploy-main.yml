@@ -9,10 +9,6 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-env:
-  google-project-id: ${{ secrets.GOOGLE_PROJECT_ID }}
-  google-sa-key: ${{ secrets.CLOUD_BUILD_SA_KEY }}
-  google-sa-email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
 
   # Allows you to run this workflow manually from the Actions tab
   # workflow_dispatch:
@@ -37,9 +33,9 @@ jobs:
       # - uses: google-github-actions/setup-gcloud@master
       with:
           version: "290.0.1"
-          project_id: ${{env.google-project-id}}
-          service_account_key: ${{env.google-sa-key}}
-          service_account_email: ${{env.google-sa-email}}
+          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
+          service_account_key: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+          service_account_email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
           export_default_credentials: true
     - run: gcloud info
     - uses: actions/checkout@v2
