@@ -37,14 +37,14 @@ jobs:
           project_id: ${{ env.PROJECT_ID }} 
           # service_account_email: ${{ env.SA_EMAIL }}
           service_account_key: ${{ env.SA_KEY }}
-          export_default_credentials: true 
+          # export_default_credentials: true 
 
     - run: gcloud info
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # - uses: google-github-actions/setup-gcloud@master
       # Runs a single command using the runners shell
     - name: Authorize Docker push
-      run: gcloud auth configure-docker
+      run: gcloud auth configure-docker --project ${{ env.PROJECT_ID }} 
 
     - name: Build and Push Container
       run: |-
