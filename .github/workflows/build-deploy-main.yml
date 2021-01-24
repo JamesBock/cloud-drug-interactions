@@ -15,14 +15,14 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 
 env: 
-  SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
-  PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+  SA_KEY: ${{ secrets.REPO_SA_KEY }}
+  PROJECT_ID: ${{ secrets.REPO_PROJECT_ID }}
 jobs:
   # This workflow contains a single job called "build"
   setup-build-deploy:
     name: Setup, Build, and Deploy
     # The type of runner that the job will run on
-    environment: GCP_MYSTIC_SOUND 
+    # environment: GCP_MYSTIC_SOUND 
     runs-on: ubuntu-latest
 
 
