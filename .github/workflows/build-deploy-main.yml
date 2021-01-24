@@ -48,9 +48,9 @@ jobs:
 
     - name: Build and Push Container
       run: |-
-        docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} .
+        docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} ./LockStepBlazor
         docker push gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }}
-        
+
    
    
    
@@ -60,5 +60,8 @@ jobs:
     #     ./LockStepBlazor
         # Runs a single command using the runners shell
     - name: deploy docker image
-      run: gcloud run deploy drug-interactions --image "gcr.io/${{ env.PROJECT_ID }}/ drug-interactions:$GITHUB_SHA" --platform managed --region=us-central1
-      working-directory: ./LockStepBlazor
+      run: |-
+        gcloud run deploy drug-interactions  --image "gcr.io/${{ env.PROJECT_ID }}/ drug-interactions:$GITHUB_SHA" --platform managed --region=us-central1
+      working-directory: ./LockStepBlazor \
+      
+   
