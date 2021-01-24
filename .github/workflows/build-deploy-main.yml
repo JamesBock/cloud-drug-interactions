@@ -33,7 +33,7 @@ jobs:
       # - uses: google-github-actions/setup-gcloud@master
       with:
           version: "290.0.1"
-          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
+          project_id: mystic-sound-280300
           service_account_key: ${{ secrets.CLOUD_BUILD_SA_KEY }}
           service_account_email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
           export_default_credentials: true
