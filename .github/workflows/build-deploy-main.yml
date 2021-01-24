@@ -44,10 +44,10 @@ jobs:
       # - uses: google-github-actions/setup-gcloud@master
       # Runs a single command using the runners shell
     - name: build docker image
-      run: gcloud builds submit --tag gcr.io/mystic-sound-280300/drug-interactions
+      run: gcloud builds submit --tag "gcr.io/${{ env.PROJECT_ID }}/drug-interactions:$GITHUB_SHA"
       working-directory:
         ./LockStepBlazor
         # Runs a single command using the runners shell
     - name: deploy docker image
-      run: gcloud run deploy --image gcr.io/mystic-sound-280300/ drug-interactions:$GITHUB_SHA --platform managed --region=us-central1
+      run: gcloud run deploy --image "gcr.io/${{ env.PROJECT_ID }}/ drug-interactions:$GITHUB_SHA" --platform managed --region=us-central1
       working-directory: ./LockStepBlazor
