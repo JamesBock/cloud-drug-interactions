@@ -30,24 +30,35 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up gcloud Cloud SDK environment
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v0.2.0
 
       with:
           # version: "290.0.1"
-          project_id: ${{ env.PROJECT_ID }}
-          service_account_email: ${{ env.SA_EMAIL }}
+          project_id: ${{ env.PROJECT_ID }} 
+          # service_account_email: ${{ env.SA_EMAIL }}
           service_account_key: ${{ env.SA_KEY }}
-          export_default_credentials: true 
+          # export_default_credentials: true 
 
     - run: gcloud info
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # - uses: google-github-actions/setup-gcloud@master
       # Runs a single command using the runners shell
-    - name: build docker image
-      run: gcloud builds submit --tag "gcr.io/${{ env.PROJECT_ID }}/drug-interactions:$GITHUB_SHA"
-      working-directory:
-        ./LockStepBlazor
+    - name: Authorize Docker push
+      run: gcloud auth configure-docker
+
+    - name: Build and Push Container
+      run: |-
+        docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} .
+        docker push gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }}
+        
+   
+   
+   
+    # - name: build docker image
+    #   run: gcloud builds submit --tag "gcr.io/${{ env.PROJECT_ID }}/drug-interactions:$GITHUB_SHA"
+    #   working-directory:
+    #     ./LockStepBlazor
         # Runs a single command using the runners shell
     - name: deploy docker image
-      run: gcloud run deploy --image "gcr.io/${{ env.PROJECT_ID }}/ drug-interactions:$GITHUB_SHA" --platform managed --region=us-central1
+      run: gcloud run deploy drug-interactions --image "gcr.io/${{ env.PROJECT_ID }}/ drug-interactions:$GITHUB_SHA" --platform managed --region=us-central1
       working-directory: ./LockStepBlazor
