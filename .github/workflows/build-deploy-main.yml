@@ -25,6 +25,7 @@ jobs:
       SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
       SA_EMAIL: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
       PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+      SERVICE_NAME: drug-interactions
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -42,14 +43,21 @@ jobs:
     - run: gcloud info
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # - uses: google-github-actions/setup-gcloud@master
-      # Runs a single command using the runners shell
-    - name: Authorize Docker push
-      run: gcloud auth configure-docker --project ${{ env.PROJECT_ID }} 
+    #   # Runs a single command using the runners shell
+    # - name: Authorize Docker push
+    #   run: gcloud auth configure-docker --project ${{ env.PROJECT_ID }} 
 
-    - name: Build and Push Container
+    - name: Build
       run: |-
-        docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} ./LockStepBlazor
-        docker push gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }}
+        gcloud builds submit \
+          --quiet \
+          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+      working-directory: ./LockStepBlazor
+
+    # - name: Build and Push Container
+    #   run: |-
+    #     docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} ./LockStepBlazor
+    #     # docker push gcr.io/$PROJECT_ID/drug-interactions:${{  github.sha }}
 
    
    
