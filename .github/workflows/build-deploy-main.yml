@@ -20,7 +20,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    environment: GCP_MYSTIC_SOUND
+    # environment: GCP_MYSTIC_SOUND
     env: 
       # SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
       SA_KEY: ${{ secrets.REPO_SA_KEY }}
