@@ -22,10 +22,12 @@ jobs:
 
     environment: GCP_MYSTIC_SOUND
     env: 
-      SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+      # SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+      SA_KEY: ${{ secrets.REPO_SA_KEY }}
       # SA_EMAIL: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
-      PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+      # PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
       SERVICE_NAME: drug-interactions
+      PROJECT_ID: mystic-sound-280300
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
