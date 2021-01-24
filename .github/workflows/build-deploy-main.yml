@@ -2,19 +2,19 @@
 
 name: build-deploy-main
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 env:
-  google-project-id:  ${{ secrets.GOOGLE_PROJECT_ID }}
-  google-sa-key:  ${{ secrets.COMPUTE_SA__KEY }}
+  google-project-id: ${{ secrets.GOOGLE_PROJECT_ID }}
+  google-sa-key: ${{ secrets.COMPUTE_SA__KEY }}
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -25,22 +25,20 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-     - uses: actions/checkout@v2
-     - uses: google-github-actions/setup-gcloud@master
-       with:
-          version: '290.0.1'
-          project_id: google-project-id
-          service_account_key: google-sa-key
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          version: "290.0.1"
+          project_id: ${{env.google-project-id}}
+          service_account_key: ${{env.google-sa-key}}
           export_default_credentials: true
-     - run: gcloud info    
-
-      # Runs a single command using the runners shell
-     - name: build docker image
-       run: gcloud builds submit --tag gcr.io/mystic-sound-280300/drug-interactions
-       working-directory: ./LockStepBlazor
-        
-         # Runs a single command using the runners shell
-     - name: deploy docker image
-       run: gcloud run deploy tenant-file-api --image gcr.io/mystic-sound-280300/drug-interactions --platform managed --region=us-central1
-       working-directory: ./LockStepBlazor
-      
+      - run: gcloud info
+        # Runs a single command using the runners shell
+      - name: build docker image
+        run: gcloud builds submit --tag gcr.io/mystic-sound-280300/drug-interactions
+        working-directory:
+          ./LockStepBlazor
+          # Runs a single command using the runners shell
+      - name: deploy docker image
+        run: gcloud run deploy tenant-file-api --image gcr.io/mystic-sound-280300/drug-interactions --platform managed --region=us-central1
+        working-directory: ./LockStepBlazor
