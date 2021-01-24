@@ -23,7 +23,7 @@ jobs:
     environment: GCP_MYSTIC_SOUND
     env: 
       SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
-      SA_EMAIL: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
+      # SA_EMAIL: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
       PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
       SERVICE_NAME: drug-interactions
 
@@ -51,7 +51,7 @@ jobs:
       run: |-
         gcloud builds submit \
           --quiet \
-          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+          --tag gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA
       working-directory: ./LockStepBlazor
 
     # - name: Build and Push Container
@@ -69,7 +69,7 @@ jobs:
         # Runs a single command using the runners shell
     - name: deploy docker image
       run: |-
-        gcloud run deploy drug-interactions  --image "gcr.io/${{ env.PROJECT_ID }}/ drug-interactions:$GITHUB_SHA" --platform managed --region=us-central1
+        gcloud run deploy drug-interactions  --image gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA --platform managed --region=us-central1
       working-directory: ./LockStepBlazor \
       
    
