@@ -16,15 +16,16 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   setup-build-deploy:
+    
+    environment: GCP_MYSTIC_SOUND
     name: Setup, Build, and Deploy
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # environment: GCP_MYSTIC_SOUND
     env: 
-      # SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
-      SA_KEY: ${{ secrets.REPO_SA_KEY }}
       # SA_EMAIL: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
+      SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+      # SA_KEY: ${{ secrets.REPO_SA_KEY }}
       # PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
       SERVICE_NAME: drug-interactions
       PROJECT_ID: mystic-sound-280300
@@ -58,8 +59,8 @@ jobs:
 
     - name: Build and Push Container
       run: |-
-        docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{  github.sha }} ./LockStepBlazor
-        docker push gcr.io/$PROJECT_ID/drug-interactions:${{  github.sha }}
+        docker build -t gcr.io/${{ env.PROJECT_ID }}/drug-interactions:${{ github.sha }} ./LockStepBlazor
+        docker push gcr.io/$PROJECT_ID/drug-interactions:${{ github.sha }}
 
    
    
