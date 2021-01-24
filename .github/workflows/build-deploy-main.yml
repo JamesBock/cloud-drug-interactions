@@ -20,7 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     environment: GCP_MYSTIC_SOUND
-    
+    env: 
+      SA_KEY: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+      PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -30,9 +32,9 @@ jobs:
 
       with:
           # version: "290.0.1"
-          project_id: mystic-sound-280300
+          project_id: ${{env.PROJECT_ID}}
           # service_account_email: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
-          service_account_key: ${{ secrets.CLOUD_BUILD_SA_KEY }}
+          service_account_key: ${{env.SA_KEY}}
           export_default_credentials: true 
 
     - run: gcloud info
